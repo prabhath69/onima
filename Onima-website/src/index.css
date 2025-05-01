@@ -1,0 +1,112 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 4%;
+    --foreground: 0 0% 98%;
+
+    --card: 0 0% 6%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 0 0% 4%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 210 100% 50%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 70%;
+
+    --accent: 186 100% 50%;
+    --accent-foreground: 0 0% 4%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 0 0% 20%;
+    --input: 0 0% 15%;
+    --ring: 210 100% 50%;
+
+    --radius: 0.5rem;
+  }
+ 
+  * {
+    @apply border-border;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Poppins', sans-serif;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-black/20 backdrop-blur-xl border border-white/10 shadow-xl;
+  }
+  
+  .glass-card {
+    @apply glass rounded-2xl p-6 transition-all duration-300;
+  }
+
+  .glass-card:hover {
+    @apply border-white/20 shadow-lg shadow-onima-electric-blue/10;
+  }
+
+  .section-padding {
+    @apply py-24 px-4 md:px-8 lg:px-16;
+  }
+
+  .neon-glow {
+    background: linear-gradient(90deg, #00c6ff, #0072ff, #7F00FF);
+    background-size: 200% auto;
+    @apply animate-pulse-gradient bg-clip-text text-transparent;
+    text-shadow: 0 0 10px rgba(0, 198, 255, 0.5), 0 0 20px rgba(0, 114, 255, 0.3);
+  }
+
+  .blue-gradient {
+    background: linear-gradient(45deg, theme('colors.onima.electric-blue') 0%, theme('colors.onima.neon-purple') 100%);
+  }
+
+  .button-gradient {
+    @apply bg-button-gradient hover:shadow-md hover:shadow-onima-electric-blue/30 transition-all duration-300;
+  }
+
+  .gradient-text {
+    @apply bg-accent-gradient bg-clip-text text-transparent;
+  }
+
+  .purple-gradient-text {
+    @apply bg-purple-gradient bg-clip-text text-transparent;
+  }
+
+  .floating-orb {
+    @apply absolute rounded-full bg-gradient-to-r opacity-20 blur-3xl animate-floating-orb;
+  }
+  
+  .form-gradient-border {
+    @apply relative before:absolute before:-inset-0.5 before:bg-glow-conic before:rounded-2xl before:opacity-20 before:-z-10 focus-within:before:opacity-40 before:blur-md before:transition-all before:duration-500;
+  }
+
+  .parallax {
+    @apply transition-transform duration-50 will-change-transform;
+  }
+}
