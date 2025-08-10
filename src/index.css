@@ -1,112 +1,201 @@
-
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
-    --background: 0 0% 4%;
-    --foreground: 0 0% 98%;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-    --card: 0 0% 6%;
-    --card-foreground: 0 0% 98%;
+html {
+  scroll-behavior: smooth;
+  scroll-snap-type: y mandatory;
+}
 
-    --popover: 0 0% 4%;
-    --popover-foreground: 0 0% 98%;
+body {
+  font-family: 'Inter', sans-serif;
+  background: #0A0A0A;
+  color: white;
+  overflow-x: hidden;
+}
 
-    --primary: 210 100% 50%;
-    --primary-foreground: 0 0% 98%;
+section {
+  scroll-snap-align: start;
+}
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
 
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 70%;
+::-webkit-scrollbar-track {
+  background: #171717;
+}
 
-    --accent: 186 100% 50%;
-    --accent-foreground: 0 0% 4%;
+::-webkit-scrollbar-thumb {
+  background: #8B5CF6;
+  border-radius: 4px;
+}
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+::-webkit-scrollbar-thumb:hover {
+  background: #7C3AED;
+}
 
-    --border: 0 0% 20%;
-    --input: 0 0% 15%;
-    --ring: 210 100% 50%;
+/* Smooth animations */
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
 
-    --radius: 0.5rem;
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from { box-shadow: 0 0 20px #8B5CF6; }
+  to { box-shadow: 0 0 30px #8B5CF6, 0 0 40px #8B5CF6; }
+}
+
+/* Gradient text animation */
+.animate-gradient {
+  background: linear-gradient(-45deg, #8B5CF6, #DC2626, #8B5CF6, #DC2626);
+  background-size: 400% 400%;
+  animation: gradient 4s ease infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@keyframes gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Particle effects */
+.particle-line {
+  position: absolute;
+  width: 2px;
+  background: linear-gradient(to bottom, transparent, #8B5CF6, transparent);
+  animation: particle-float 8s linear infinite;
+}
+
+@keyframes particle-float {
+  0% {
+    transform: translateY(100vh) rotate(0deg);
+    opacity: 0;
   }
- 
-  * {
-    @apply border-border;
-    box-sizing: border-box;
+  10% {
+    opacity: 1;
   }
-
-  html {
-    scroll-behavior: smooth;
+  90% {
+    opacity: 1;
   }
-  
-  body {
-    @apply bg-background text-foreground;
-    font-family: 'Inter', sans-serif;
-    overflow-x: hidden;
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Poppins', sans-serif;
+  100% {
+    transform: translateY(-100px) rotate(360deg);
+    opacity: 0;
   }
 }
 
-@layer components {
-  .glass {
-    @apply bg-black/20 backdrop-blur-xl border border-white/10 shadow-xl;
+/* Enhanced hover effects */
+.hover-lift {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(139, 92, 246, 0.3);
+}
+
+/* Slide up animation for notifications */
+.animate-slide-up {
+  animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Enhanced 3D transforms */
+.transform-3d {
+  transform-style: preserve-3d;
+}
+
+.rotate-x-12 {
+  transform: rotateX(12deg);
+}
+
+.rotate-y-12 {
+  transform: rotateY(12deg);
+}
+
+/* Radial gradient utility */
+.bg-gradient-radial {
+  background: radial-gradient(circle, var(--tw-gradient-stops));
+}
+
+/* Kinetic text effects */
+.kinetic-text {
+  display: inline-block;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.kinetic-text:hover {
+  transform: scale(1.05) rotate(2deg);
+  color: #8B5CF6;
+}
+
+/* Glass morphism */
+.glass-morph {
+  background: rgba(23, 23, 23, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Progress line animation */
+.progress-line {
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-line::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, #8B5CF6, transparent);
+  animation: progress-sweep 2s ease-in-out infinite;
+}
+
+@keyframes progress-sweep {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+/* Responsive typography */
+@media (max-width: 768px) {
+  .text-8xl {
+    font-size: 4rem;
+    line-height: 1;
   }
   
-  .glass-card {
-    @apply glass rounded-2xl p-6 transition-all duration-300;
-  }
-
-  .glass-card:hover {
-    @apply border-white/20 shadow-lg shadow-onima-electric-blue/10;
-  }
-
-  .section-padding {
-    @apply py-24 px-4 md:px-8 lg:px-16;
-  }
-
-  .neon-glow {
-    background: linear-gradient(90deg, #00c6ff, #0072ff, #7F00FF);
-    background-size: 200% auto;
-    @apply animate-pulse-gradient bg-clip-text text-transparent;
-    text-shadow: 0 0 10px rgba(0, 198, 255, 0.5), 0 0 20px rgba(0, 114, 255, 0.3);
-  }
-
-  .blue-gradient {
-    background: linear-gradient(45deg, theme('colors.onima.electric-blue') 0%, theme('colors.onima.neon-purple') 100%);
-  }
-
-  .button-gradient {
-    @apply bg-button-gradient hover:shadow-md hover:shadow-onima-electric-blue/30 transition-all duration-300;
-  }
-
-  .gradient-text {
-    @apply bg-accent-gradient bg-clip-text text-transparent;
-  }
-
-  .purple-gradient-text {
-    @apply bg-purple-gradient bg-clip-text text-transparent;
-  }
-
-  .floating-orb {
-    @apply absolute rounded-full bg-gradient-to-r opacity-20 blur-3xl animate-floating-orb;
-  }
-  
-  .form-gradient-border {
-    @apply relative before:absolute before:-inset-0.5 before:bg-glow-conic before:rounded-2xl before:opacity-20 before:-z-10 focus-within:before:opacity-40 before:blur-md before:transition-all before:duration-500;
-  }
-
-  .parallax {
-    @apply transition-transform duration-50 will-change-transform;
+  .text-6xl {
+    font-size: 3rem;
+    line-height: 1;
   }
 }

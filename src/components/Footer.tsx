@@ -1,59 +1,63 @@
-
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { Linkedin, Twitter, Mail } from 'lucide-react';
 
-const Footer: React.FC = () => {
-  const currentYear = new Date().getFullYear();
-
+const Footer = () => {
   return (
-    <footer className="py-12 px-4 bg-onima-dark border-t border-white/10">
-      <div className="container mx-auto max-w-6xl">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
-          <div className="col-span-1 md:col-span-2">
-            <h2 className="text-2xl font-bold text-onima-neon mb-4">ONIMA</h2>
-            <p className="text-white/70 mb-6 max-w-md">
-              India's premier AI Automation Agency helping businesses leverage artificial intelligence 
-              to optimize workflows, increase productivity, and drive growth.
+    <footer className="border-t border-neutral-800 py-12">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="grid md:grid-cols-4 gap-8 mb-8">
+          <div className="md:col-span-2">
+            <div className="text-3xl font-bold bg-gradient-to-r from-violet-400 to-red-400 bg-clip-text text-transparent mb-4">
+              ONIMA
+            </div>
+            <p className="text-neutral-400 italic mb-4">Built by humans who hate boring shit.</p>
+            <p className="text-neutral-300 text-sm leading-relaxed">
+              We deploy emotionally intelligent AI agents that kill busywork permanently. 
+              From chatbots to voice agents to custom automations—we reclaim your time.
             </p>
-            <div className="flex space-x-4">
-              <a href="https://www.linkedin.com/in/prabhathb/" target="_blank" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-onima-blue/20 transition-colors">
-                <span className="text-onima-neon">in</span>
-              </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-onima-blue/20 transition-colors">
-                <span className="text-onima-neon">XXX</span>
-              </a>
-              <a href="https://www.instagram.com/onima.services?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-onima-blue/20 transition-colors">
-                <span className="text-onima-neon">IG</span>
-              </a>
+          </div>
+          
+          <div>
+            <h4 className="text-white font-semibold mb-4">Quick Links</h4>
+            <div className="space-y-2">
+              <Link to="/work" className="block text-neutral-400 hover:text-violet-400 transition-colors text-sm">
+                Our Work
+              </Link>
+              <Link to="/story" className="block text-neutral-400 hover:text-violet-400 transition-colors text-sm">
+                Our Story
+              </Link>
+              <Link to="/services" className="block text-neutral-400 hover:text-violet-400 transition-colors text-sm">
+                Services
+              </Link>
+              <Link to="/contact" className="block text-neutral-400 hover:text-violet-400 transition-colors text-sm">
+                Contact
+              </Link>
             </div>
           </div>
           
           <div>
-            <h3 className="text-lg font-semibold mb-4">Services</h3>
-            <ul className="space-y-2">
-              <li><a href="#contact" className="text-white/70 hover:text-onima-neon transition-colors">Email Automation</a></li>
-              <li><a href="#contact" className="text-white/70 hover:text-onima-neon transition-colors">CRM Integration</a></li>
-              <li><a href="#contact" className="text-white/70 hover:text-onima-neon transition-colors">AI Sales Pitching</a></li>
-              <li><a href="#contact" className="text-white/70 hover:text-onima-neon transition-colors">Website Generation</a></li>
-            </ul>
-          </div>
-          
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Company</h3>
-            <ul className="space-y-2">
-              <li><a href="#services" className="text-white/70 hover:text-onima-neon transition-colors">About Us</a></li>
-              <li><a href="#works" className="text-white/70 hover:text-onima-neon transition-colors">Our Work</a></li>
-              <li><a href="#works" className="text-white/70 hover:text-onima-neon transition-colors">Blog</a></li>
-              <li><a href="#contact" className="text-white/70 hover:text-onima-neon transition-colors">Contact</a></li>
-            </ul>
+            <h4 className="text-white font-semibold mb-4">Connect</h4>
+            <div className="space-y-3">
+              <a href="mailto:build@onima.in" className="flex items-center text-neutral-400 hover:text-violet-400 transition-colors text-sm">
+                <Mail className="w-4 h-4 mr-2" />
+                build@onima.in
+              </a>
+              <div className="flex space-x-3">
+                <a href="#" className="text-neutral-400 hover:text-violet-400 transition-colors">
+                  <Linkedin className="w-5 h-5" />
+                </a>
+                <a href="#" className="text-neutral-400 hover:text-violet-400 transition-colors">
+                  <Twitter className="w-5 h-5" />
+                </a>
+              </div>
+            </div>
           </div>
         </div>
         
-        <div className="border-t border-white/10 mt-10 pt-6 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-white/50 text-sm">© {currentYear} Onima AI. All rights reserved.</p>
-          <div className="flex gap-6 mt-4 md:mt-0">
-            <a href="#" className="text-white/50 text-sm hover:text-white">Privacy Policy</a>
-            <a href="#" className="text-white/50 text-sm hover:text-white">Terms of Service</a>
-          </div>
+        <div className="border-t border-neutral-800 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-neutral-400">
+          <p>&copy; 2025 Onima. All rights reserved.</p>
+          <p>Repetition is a system failure.</p>
         </div>
       </div>
     </footer>
