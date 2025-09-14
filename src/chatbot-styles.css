@@ -1,0 +1,127 @@
+:root {
+	/* Updated color palette to match website */
+	--chat--color-primary: #8B5CF6;
+	--chat--color-primary-shade-50: #7C3AED;
+	--chat--color-primary-shade-100: #6D28D9;
+	--chat--color-secondary: #DC2626;
+	--chat--color-secondary-shade-50: #B91C1C;
+	--chat--color-secondary-shade-100: #991B1B;
+	--chat--color-white: #ffffff;
+	--chat--color-light: rgba(32, 26, 26, 0.9);
+	--chat--color-light-shade-50: rgba(255, 255, 255, 0.7);
+	--chat--color-light-shade-100: rgba(255, 255, 255, 0.5);
+	--chat--color-medium: rgba(255, 255, 255, 0.3);
+	--chat--color-dark: rgba(255, 255, 255, 0.95);
+	--chat--color-disabled: rgba(119, 121, 128, 0.6);
+	--chat--color-typing: rgba(255, 255, 255, 0.8);
+
+	--chat--spacing: 1rem;
+	--chat--border-radius: 0.5rem;
+	--chat--transition-duration: 0.3s;
+
+	--chat--window--width: 400px;
+	--chat--window--height: 600px;
+
+	--chat--header-height: auto;
+	--chat--header--padding: var(--chat--spacing);
+	--chat--header--background: linear-gradient(135deg, #8B5CF6 0%, #DC2626 100%);
+	--chat--header--color: var(--chat--color-white);
+	--chat--header--border-top: none;
+	--chat--header--border-bottom: none;
+	--chat--heading--font-size: 1.5em;
+	--chat--subtitle--font-size: 0.9em;
+	--chat--subtitle--line-height: 1.6;
+
+	--chat--textarea--height: 50px;
+
+	--chat--message--font-size: 0.95rem;
+	--chat--message--padding: 0.75rem 1rem;
+	--chat--message--border-radius: var(--chat--border-radius);
+	--chat--message-line-height: 1.6;
+	--chat--message--bot--background: #8B5CF6;
+	--chat--message--bot--color: var(--chat--color-light);
+	--chat--message--bot--border: 1px solid rgba(255, 255, 255, 0.1);
+	--chat--message--user--background: linear-gradient(135deg, #8B5CF6 0%, #DC2626 100%);
+	--chat--message--user--color: var(--chat--color-white);
+	--chat--message--user--border: none;
+	--chat--message--pre--background: rgba(0, 0, 0, 0.3);
+
+	--chat--toggle--background: linear-gradient(135deg, #8B5CF6 0%, #DC2626 100%);
+	--chat--toggle--hover--background: linear-gradient(135deg, #7C3AED 0%, #B91C1C 100%);
+	--chat--toggle--active--background: linear-gradient(135deg, #6D28D9 0%, #991B1B 100%);
+	--chat--toggle--color: var(--chat--color-white);
+	--chat--toggle--size: 64px;
+}
+
+/* Glass morphism effect for chat window */
+.chat-window {
+	backdrop-filter: blur(20px);
+	background: rgba(23, 23, 23, 0.8);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	box-shadow: 0 20px 40px rgba(139, 92, 246, 0.3);
+}
+
+/* Message bubbles with glass effect */
+.chat-message {
+	backdrop-filter: blur(10px);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Smooth animations matching website */
+.chat-toggle {
+	animation: float 6s ease-in-out infinite;
+	box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+}
+
+.chat-toggle:hover {
+	animation: glow 2s ease-in-out infinite alternate;
+	transform: translateY(-8px);
+}
+
+/* Input field styling */
+.chat-textarea {
+	background: rgba(23, 23, 23, 0.6);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	color: var(--chat--color-light);
+	backdrop-filter: blur(10px);
+}
+
+.chat-textarea:focus {
+	border-color: #8B5CF6;
+	box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+}
+
+/* Scrollbar styling to match website */
+.chat-messages-container::-webkit-scrollbar {
+	width: 6px;
+}
+
+.chat-messages-container::-webkit-scrollbar-track {
+	background: rgba(23, 23, 23, 0.5);
+	border-radius: 3px;
+}
+
+.chat-messages-container::-webkit-scrollbar-thumb {
+	background: #8B5CF6;
+	border-radius: 3px;
+}
+
+.chat-messages-container::-webkit-scrollbar-thumb:hover {
+	background: #7C3AED;
+}
+
+/* Typing indicator animation */
+.typing-indicator {
+	background: var(--chat--color-typing);
+}
+
+.typing-indicator::after {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: -100%;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(90deg, transparent, #8B5CF6, transparent);
+	animation: progress-sweep 2s ease-in-out infinite;
+}
