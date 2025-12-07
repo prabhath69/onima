@@ -16,7 +16,7 @@ import './chatbot-styles.css'
 function App() {
   useEffect(() => {
 		createChat({
-			webhookUrl: 'http://localhost:5678/webhook/22f03920-3d1b-40ab-9259-38293f22aa97/chat',
+			webhookUrl: 'http://localhost/webhook/22f03920-3d1b-40ab-9259-38293f22aa97/chat',
       webhookConfig: {
 		method: 'POST',
 		headers: {}
