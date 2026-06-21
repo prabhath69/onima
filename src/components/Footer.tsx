@@ -4,60 +4,67 @@ import { Linkedin, Twitter, Mail } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <footer className="border-t border-neutral-800 py-12">
+    <footer className="relative z-10 border-t border-white/[0.04] glass-section py-8 mt-auto">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="grid md:grid-cols-4 gap-8 mb-8">
-          <div className="md:col-span-2">
-            <div className="text-3xl font-bold bg-gradient-to-r from-violet-400 to-red-400 bg-clip-text text-transparent mb-4">
-              ONIMA
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 pb-6 border-b border-white/[0.04]">
+          <div>
+            <div className="flex items-center space-x-2">
+              <span className="font-['Outfit'] font-bold text-lg tracking-wider text-white">
+                ONIMA
+              </span>
+              <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse" />
             </div>
-            <p className="text-neutral-400 italic mb-4">Built by humans who hate boring shit.</p>
-            <p className="text-neutral-300 text-sm leading-relaxed">
-              We deploy emotionally intelligent AI agents that kill busywork permanently. 
-              From chatbots to voice agents to custom automations—we reclaim your time.
+            <p className="text-xs text-zinc-400 mt-1 max-w-sm">
+              Deploying high-performance AI agents and custom workflow automations.
             </p>
           </div>
-          
-          <div>
-            <h4 className="text-white font-semibold mb-4">Quick Links</h4>
-            <div className="space-y-2">
-              <Link href="/work" className="block text-neutral-400 hover:text-violet-400 transition-colors text-sm">
-                Our Work
-              </Link>
-              <Link href="/story" className="block text-neutral-400 hover:text-violet-400 transition-colors text-sm">
-                Our Story
-              </Link>
-              <Link href="/services" className="block text-neutral-400 hover:text-violet-400 transition-colors text-sm">
-                Services
-              </Link>
-              <Link href="/contact" className="block text-neutral-400 hover:text-violet-400 transition-colors text-sm">
-                Contact
-              </Link>
-            </div>
+
+          <div className="flex flex-wrap gap-x-8 gap-y-2 text-xs">
+            <Link href="/work" className="text-zinc-400 hover:text-white transition-colors duration-300">
+              Work
+            </Link>
+            <Link href="/services" className="text-zinc-400 hover:text-white transition-colors duration-300">
+              Services
+            </Link>
+            <Link href="/story" className="text-zinc-400 hover:text-white transition-colors duration-300">
+              Story
+            </Link>
+            <Link href="/contact" className="text-zinc-400 hover:text-white transition-colors duration-300">
+              Contact
+            </Link>
           </div>
-          
-          <div>
-            <h4 className="text-white font-semibold mb-4">Connect</h4>
-            <div className="space-y-3">
-              <a href="mailto:build@onima.in" className="flex items-center text-neutral-400 hover:text-violet-400 transition-colors text-sm">
-                <Mail className="w-4 h-4 mr-2" />
-                build@onima.in
-              </a>
-              <div className="flex space-x-3">
-                <a href="#" className="text-neutral-400 hover:text-violet-400 transition-colors">
-                  <Linkedin className="w-5 h-5" />
-                </a>
-                <a href="#" className="text-neutral-400 hover:text-violet-400 transition-colors">
-                  <Twitter className="w-5 h-5" />
-                </a>
-              </div>
-            </div>
+
+          <div className="flex items-center space-x-4">
+            <a 
+              href="mailto:build@onima.in" 
+              className="flex items-center text-xs text-zinc-400 hover:text-white transition-colors duration-300"
+            >
+              <Mail className="w-3.5 h-3.5 mr-1.5 text-zinc-500" />
+              build@onima.in
+            </a>
+            <div className="h-3 w-px bg-white/[0.06]" />
+            <a 
+              href="#" 
+              aria-label="LinkedIn"
+              className="text-zinc-400 hover:text-white transition-colors duration-300"
+            >
+              <Linkedin className="w-4 h-4" />
+            </a>
+            <a 
+              href="#" 
+              aria-label="Twitter"
+              className="text-zinc-400 hover:text-white transition-colors duration-300"
+            >
+              <Twitter className="w-4 h-4" />
+            </a>
           </div>
         </div>
-        
-        <div className="border-t border-neutral-800 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-neutral-400">
-          <p>&copy; 2025 Onima. All rights reserved.</p>
-          <p>Repetition is a system failure.</p>
+
+        <div className="flex flex-col md:flex-row justify-between items-center pt-6 text-xs text-zinc-500 gap-2">
+          <p>&copy; {new Date().getFullYear()} Onima. All rights reserved.</p>
+          <div className="flex items-center space-x-4">
+            <span>Repetition is a system failure.</span>
+          </div>
         </div>
       </div>
     </footer>

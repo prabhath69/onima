@@ -7,9 +7,23 @@ export default function Chatbot() {
   useEffect(() => {
     const initChat = async () => {
       try {
+        const webhookUrl = process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL || 'http://localhost:5678/webhook/22f03920-3d1b-40ab-9259-38293f22aa97/chat';
+
+        // Pre-flight check to see if n8n webhook is online/reachable.
+        // Prevents the library's internal loadPreviousSession from causing unhandled TypeError: Failed to fetch rejections.
+        try {
+          await fetch(webhookUrl, {
+            method: 'OPTIONS',
+            mode: 'cors',
+          });
+        } catch (fetchError) {
+          console.warn('n8n chatbot webhook is offline or unreachable. Skipping chatbot widget rendering.', fetchError);
+          return;
+        }
+
         const { createChat } = await import('@n8n/chat');
         createChat({
-          webhookUrl: 'http://localhost:5678/webhook/22f03920-3d1b-40ab-9259-38293f22aa97/chat',
+          webhookUrl,
           webhookConfig: {
             method: 'POST',
             headers: {}

@@ -6,8 +6,8 @@ import {
   MessageCircle, 
   Phone, 
   Zap, 
-  Users, 
-  Video,
+  Globe, 
+  Layers,
   ArrowRight,
   CheckCircle,
   TrendingUp,
@@ -21,15 +21,15 @@ const Services = () => {
   const services = [
     {
       icon: Zap,
-      title: "Customized Automation Solutions",
+      title: "AI Automation",
       subtitle: "Our flagship offering",
-      description: "End-to-end workflow automations that think, not just execute. From first lead touch to final invoice, we eliminate every repetitive task crushing your team's potential.",
+      description: "Eliminate inefficiency. Eliminate error. Scale with confidence. We design and build custom end-to-end automations of backend workflows.",
       features: [
-        "Intelligent workflow design",
-        "Cross-platform integrations",
-        "Self-improving algorithms",
-        "Real-time optimization",
-        "Custom business logic"
+        "End-to-end automation of backend workflows (data entry, invoicing)",
+        "Drastically reduces human error in critical processes",
+        "Frees your team from low-value repetitive tasks for strategy",
+        "Scalable pipelines adapt in real time to fluctuating demands",
+        "Custom business logic and cross-platform integrations"
       ],
       scenario: {
         title: "SaaS Onboarding Revolution",
@@ -48,13 +48,13 @@ const Services = () => {
       icon: Phone,
       title: "AI Voice Agents",
       subtitle: "Hyper-realistic conversations",
-      description: "Voice agents that talk, persuade, and book appointments like your best sales reps. Indistinguishable from humans, available 24/7, never have a bad day.",
+      description: "Always-on, human-like conversations — zero hold time, zero missed calls. Voice agents that talk, persuade, and book appointments 24/7.",
       features: [
-        "Natural conversation flow",
-        "Emotional intelligence",
-        "Real-time calendar booking",
-        "Multi-language support",
-        "Custom voice training"
+        "24/7 availability handles every customer query instantly",
+        "Natural Language Processing enables fluid conversations",
+        "Automates appointment scheduling, support tickets, lead qualification",
+        "Dramatically cuts operational costs by replacing repetitive tasks",
+        "Feeds real-time interaction data into your CRM/analytics"
       ],
       scenario: {
         title: "Real Estate Appointment Booking",
@@ -72,14 +72,14 @@ const Services = () => {
     {
       icon: MessageCircle,
       title: "AI Chatbots",
-      subtitle: "Emotionally intelligent conversations",
-      description: "Chatbots that understand context, emotion, and intent. They don't just respond—they convert leads, solve problems, and learn from every interaction.",
+      subtitle: "WhatsApp · Facebook · Instagram",
+      description: "Meet your customers where they already are, with intelligence they will notice. Deploy unified AI brains across WhatsApp, Messenger, and Instagram.",
       features: [
-        "Contextual understanding",
-        "Lead qualification",
-        "Multi-channel deployment",
-        "Sentiment analysis",
-        "Continuous learning"
+        "Unified AI brain deployed across WhatsApp, Messenger, and Instagram",
+        "Instantly handles product enquiries, order processing, and FAQs",
+        "Personalised messaging at scale tailored to customer history",
+        "Multilingual support breaks language barriers for diverse audiences",
+        "Native integration with e-commerce, payment gateways, and CRMs"
       ],
       scenario: {
         title: "E-commerce Lead Qualification",
@@ -95,70 +95,74 @@ const Services = () => {
       }
     },
     {
-      icon: Users,
-      title: "Lead Generation",
-      subtitle: "Intelligent prospect identification",
-      description: "AI-powered lead generation that identifies, qualifies, and nurtures prospects automatically. No more cold outreach—warm conversations from day one.",
+      icon: Globe,
+      title: "Website Development",
+      subtitle: "Your digital storefront",
+      description: "Built to convert, whether you sell products, services, or ideas. Blazing fast, mobile-first, and search-engine-optimised.",
       features: [
-        "Predictive lead scoring",
-        "Automated outreach sequences",
-        "Behavioral tracking",
-        "CRM integration",
-        "Performance analytics"
+        "E-commerce websites with robust catalogues and secure payment gateways",
+        "Portfolio and corporate sites built for authority, trust, and lead generation",
+        "Mobile-first, SEO-optimised, and blazing-fast site performance",
+        "Interactive frontend animations and user journeys",
+        "Continuous support and modern tech stack"
       ],
       scenario: {
-        title: "B2B Pipeline Acceleration",
-        problem: "Manual prospecting taking 20 hours/week, low conversion",
-        solution: "AI identifies and nurtures qualified prospects automatically",
-        roi: "+250% qualified leads, 15 hours/week reclaimed"
+        title: "Brand Presence & Speed",
+        problem: "Slow loading legacy site, 65% mobile bounce rate, low trust",
+        solution: "Next-gen Next.js site with custom interaction paths",
+        roi: "Bounce rate reduced to 15%, +120% conversion"
       },
       metrics: {
-        leads: "+250%",
-        quality: "95%",
-        time: "-75%",
-        cost: "-60%"
+        speed: "99/100 Mobile",
+        bounce: "-50%",
+        leads: "+120%",
+        availability: "100%"
       }
     },
     {
-      icon: Video,
-      title: "Video/Content Generation",
-      subtitle: "Scalable content creation",
-      description: "AI-generated video content and written materials that maintain your brand voice while scaling your content production infinitely.",
+      icon: Layers,
+      title: "SaaS Development",
+      subtitle: "Built to scale",
+      description: "Turn your vision into a revenue-generating software product — built for any industry, any scale. Custom systems with multi-tenant architecture.",
       features: [
-        "Brand voice consistency",
-        "Multi-format output",
-        "Automated scheduling",
-        "Performance optimization",
-        "Custom templates"
+        "Custom SaaS platforms built precisely to your business model",
+        "Multi-tenant architecture with role-based access and subscription billing",
+        "Rapid iterative delivery gets you to market faster without quality compromise",
+        "Scale-ready cloud infrastructure and database modeling",
+        "Integrations with payment systems (Stripe) and notifications"
       ],
       scenario: {
-        title: "Marketing Content Scale",
-        problem: "Content creation bottleneck, 2 videos/month capacity",
-        solution: "AI generates personalized video content at scale",
-        roi: "50 videos/month, 80% cost reduction"
+        title: "SaaS Platform Launch",
+        problem: "Building SaaS MVP takes 9 months, high risk of feature creep",
+        solution: "Modular architecture, rapid prototyping, scale-ready launch",
+        roi: "MVP launched in 6 weeks, $150K dev costs saved"
       },
       metrics: {
-        output: "+2400%",
-        cost: "-80%",
-        consistency: "100%",
-        speed: "10x faster"
+        launch: "6 weeks",
+        savings: "$150,000",
+        scale: "Ready",
+        support: "24/7"
       }
     }
   ];
 
   const ActiveIcon = services[activeService].icon;
+  const metrics = services[activeService].metrics as unknown as Record<string, string>;
 
   return (
-    <div className="min-h-screen pt-28">
+    <div className="min-h-screen pt-28 relative overflow-hidden">
+
       {/* Hero */}
-      <section className="py-20">
+      <section className="py-20 relative z-10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h1 className="text-5xl md:text-7xl font-bold mb-6" style={{ fontFamily: 'Playfair Display, serif' }}>
+            <h1 className="text-5xl md:text-7xl font-bold mb-6 font-outfit tracking-tight">
               Solutions That<br />
-              <span className="text-violet-400">Actually</span> <span className="text-red-400">Work</span>
+              <span className="bg-gradient-to-r from-indigo-400 via-violet-400 to-cyan-400 bg-clip-text text-transparent">
+                Actually Work
+              </span>
             </h1>
-            <p className="text-xl text-neutral-300 max-w-3xl mx-auto">
+            <p className="text-xl text-zinc-400 max-w-3xl mx-auto font-light">
               Five core services. One mission: eliminate the busywork crushing your team's potential.
             </p>
           </div>
@@ -166,7 +170,7 @@ const Services = () => {
       </section>
 
       {/* Service Navigation */}
-      <section className="py-12 border-b border-neutral-800">
+      <section className="py-12 border-b border-white/[0.04] relative z-10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-wrap justify-center gap-4">
             {services.map((service, index) => {
@@ -175,16 +179,22 @@ const Services = () => {
                 <button
                   key={index}
                   onClick={() => setActiveService(index)}
-                  className={`flex items-center px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${
+                  className={`flex items-center px-6 py-3 rounded-full font-semibold transition-all duration-500 cursor-pointer ${
                     activeService === index
-                      ? 'bg-gradient-to-r from-violet-600 to-red-600 text-white'
-                      : 'bg-neutral-800 text-neutral-300 hover:bg-neutral-700'
+                      ? 'bg-gradient-to-r from-indigo-500 to-cyan-500 text-zinc-950 shadow-lg shadow-indigo-500/20'
+                      : 'border border-white/[0.06] bg-white/[0.02] text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.06]'
                   }`}
                 >
                   <ServiceIcon className="w-5 h-5 mr-2" />
                   {service.title}
                   {index === 0 && (
-                    <span className="ml-2 px-2 py-1 bg-red-500 text-xs rounded-full">FLAGSHIP</span>
+                    <span className={`ml-2 px-2 py-0.5 text-[10px] rounded-full uppercase tracking-wider font-semibold border ${
+                      activeService === index 
+                        ? 'bg-zinc-950/20 border-zinc-950/30 text-zinc-950' 
+                        : 'bg-indigo-500/10 border-indigo-500/20 text-indigo-300'
+                    }`}>
+                      FLAGSHIP
+                    </span>
                   )}
                 </button>
               );
@@ -194,33 +204,33 @@ const Services = () => {
       </section>
 
       {/* Active Service Details */}
-      <section className="py-20">
+      <section className="py-20 relative z-10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-16 items-start">
             {/* Service Overview */}
             <div>
-              <div className="flex items-center mb-4">
-                <ActiveIcon className="w-12 h-12 text-violet-400 mr-4" />
+              <div className="flex items-center mb-6">
+                <ActiveIcon className="w-12 h-12 text-indigo-400 mr-4" />
                 <div>
-                  <h2 className="text-4xl font-bold" style={{ fontFamily: 'Playfair Display, serif' }}>
+                  <h2 className="text-4xl font-bold font-outfit text-zinc-100">
                     {services[activeService].title}
                   </h2>
-                  <p className="text-violet-400 font-semibold">{services[activeService].subtitle}</p>
+                  <p className="text-indigo-400 font-semibold tracking-wide uppercase text-sm mt-1">{services[activeService].subtitle}</p>
                 </div>
               </div>
               
-              <p className="text-xl text-neutral-300 leading-relaxed mb-8">
+              <p className="text-xl text-zinc-300 leading-relaxed mb-8 font-light">
                 {services[activeService].description}
               </p>
 
               {/* Features */}
               <div className="mb-8">
-                <h3 className="text-2xl font-bold mb-4">What's Included</h3>
+                <h3 className="text-2xl font-bold mb-4 font-outfit text-zinc-100">What's Included</h3>
                 <div className="flex flex-col gap-3">
                   {services[activeService].features.map((feature, index) => (
                     <div key={index} className="flex items-center">
-                      <CheckCircle className="w-5 h-5 text-green-400 mr-3 flex-shrink-0" />
-                      <span className="text-neutral-300">{feature}</span>
+                      <CheckCircle className="w-5 h-5 text-cyan-400 mr-3 flex-shrink-0" />
+                      <span className="text-zinc-300 font-light">{feature}</span>
                     </div>
                   ))}
                 </div>
@@ -228,10 +238,10 @@ const Services = () => {
 
               {/* Metrics */}
               <div className="grid grid-cols-2 gap-4">
-                {Object.entries(services[activeService].metrics).map(([key, value], index) => (
-                  <div key={index} className="bg-neutral-900 p-4 rounded-lg border border-neutral-800">
-                    <div className="text-2xl font-bold text-violet-400">{value}</div>
-                    <div className="text-sm text-neutral-400 capitalize">{key}</div>
+                {Object.entries(metrics).map(([key, value], index) => (
+                  <div key={index} className="glass-card p-5 rounded-2xl animate-shimmer">
+                    <div className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">{value}</div>
+                    <div className="text-sm text-zinc-400 capitalize mt-1 font-light">{key}</div>
                   </div>
                 ))}
               </div>
@@ -239,65 +249,65 @@ const Services = () => {
 
             {/* Scenario & ROI */}
             <div className="flex flex-col gap-8">
-              <div className="bg-gradient-to-br from-violet-900/20 to-red-900/20 p-8 rounded-lg border border-violet-500/30">
-                <h3 className="text-2xl font-bold mb-6 text-violet-400">Real-World Scenario</h3>
+              <div className="glass-card p-8 rounded-2xl animate-shimmer">
+                <h3 className="text-2xl font-bold mb-6 font-outfit bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">Real-World Scenario</h3>
                 
                 <div className="flex flex-col gap-6">
                   <div>
-                    <h4 className="font-semibold text-red-400 mb-2">The Challenge</h4>
-                    <p className="text-neutral-300">{services[activeService].scenario.problem}</p>
+                    <h4 className="font-semibold text-zinc-300 mb-2 font-outfit">The Challenge</h4>
+                    <p className="text-zinc-400 font-light">{services[activeService].scenario.problem}</p>
                   </div>
                   
                   <div>
-                    <h4 className="font-semibold text-violet-400 mb-2">Our Solution</h4>
-                    <p className="text-neutral-300">{services[activeService].scenario.solution}</p>
+                    <h4 className="font-semibold text-indigo-300 mb-2 font-outfit">Our Solution</h4>
+                    <p className="text-zinc-400 font-light">{services[activeService].scenario.solution}</p>
                   </div>
                   
                   <div>
-                    <h4 className="font-semibold text-green-400 mb-2">The ROI</h4>
-                    <p className="text-green-400 font-bold text-lg">{services[activeService].scenario.roi}</p>
+                    <h4 className="font-semibold text-cyan-400 mb-2 font-outfit">The ROI</h4>
+                    <p className="bg-gradient-to-r from-indigo-400 via-violet-400 to-cyan-400 bg-clip-text text-transparent font-bold text-xl">{services[activeService].scenario.roi}</p>
                   </div>
                 </div>
               </div>
 
               {/* Visual Representation */}
-              <div className="bg-neutral-900 p-8 rounded-lg border border-neutral-800">
-                <h3 className="text-xl font-bold mb-6">Impact Visualization</h3>
+              <div className="glass-card p-8 rounded-2xl animate-shimmer">
+                <h3 className="text-xl font-bold mb-6 font-outfit text-zinc-200">Impact Visualization</h3>
                 
                 <div className="flex flex-col gap-4">
                   <div>
                     <div className="flex justify-between mb-2">
-                      <span className="text-sm">Efficiency Gain</span>
-                      <span className="text-violet-400 font-bold">
-                        {services[activeService].metrics.efficiency || services[activeService].metrics.output}
+                      <span className="text-sm text-zinc-400">Efficiency Gain</span>
+                      <span className="text-indigo-400 font-bold">
+                        {metrics.efficiency || metrics.output || metrics.speed || metrics.launch || 'High'}
                       </span>
                     </div>
-                    <div className="bg-neutral-800 rounded-full h-3 overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-violet-500 to-green-400 w-full animate-pulse"></div>
+                    <div className="bg-zinc-950 rounded-full h-3 overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-indigo-500 to-cyan-400 w-full animate-pulse"></div>
                     </div>
                   </div>
                   
                   <div>
                     <div className="flex justify-between mb-2">
-                      <span className="text-sm">Cost Reduction</span>
-                      <span className="text-green-400 font-bold">
-                        {services[activeService].metrics.cost || '-75%'}
+                      <span className="text-sm text-zinc-400">Cost Reduction / Savings</span>
+                      <span className="text-cyan-400 font-bold">
+                        {metrics.cost || metrics.savings || metrics.bounce || '-75%'}
                       </span>
                     </div>
-                    <div className="bg-neutral-800 rounded-full h-3 overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-green-500 to-blue-400 w-3/4 animate-pulse delay-300"></div>
+                    <div className="bg-zinc-950 rounded-full h-3 overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-cyan-500 to-blue-400 w-3/4 animate-pulse delay-300"></div>
                     </div>
                   </div>
                   
                   <div>
                     <div className="flex justify-between mb-2">
-                      <span className="text-sm">Accuracy/Quality</span>
-                      <span className="text-red-400 font-bold">
-                        {services[activeService].metrics.accuracy || services[activeService].metrics.satisfaction}
+                      <span className="text-sm text-zinc-400">Accuracy / Quality / Leads</span>
+                      <span className="text-zinc-200 font-bold">
+                        {metrics.accuracy || metrics.satisfaction || metrics.leads || metrics.scale || '99%'}
                       </span>
                     </div>
-                    <div className="bg-neutral-800 rounded-full h-3 overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-red-500 to-violet-400 w-full animate-pulse delay-500"></div>
+                    <div className="bg-zinc-950 rounded-full h-3 overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-violet-500 to-indigo-400 w-full animate-pulse delay-500"></div>
                     </div>
                   </div>
                 </div>
@@ -308,13 +318,13 @@ const Services = () => {
       </section>
 
       {/* Service Comparison */}
-      <section className="py-20 bg-neutral-900/30">
+      <section className="py-24 glass-section border-t border-white/[0.04] relative z-10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6" style={{ fontFamily: 'Playfair Display, serif' }}>
-              Why Choose <span className="text-violet-400">Onima</span>?
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 font-outfit">
+              Why Choose <span className="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">Onima</span>?
             </h2>
-            <p className="text-xl text-neutral-300">
+            <p className="text-xl text-zinc-400 font-light">
               We don't just automate—we transform. Here's how we're different.
             </p>
           </div>
@@ -339,12 +349,12 @@ const Services = () => {
             ].map((benefit, index) => {
               const BenefitIcon = benefit.icon;
               return (
-                <div key={index} className="group bg-neutral-900 p-8 rounded-lg border border-neutral-800 hover:border-violet-500 transition-all duration-300 hover:scale-105">
-                  <BenefitIcon className="w-12 h-12 text-violet-400 mb-6 group-hover:scale-110 transition-transform" />
-                  <h3 className="text-2xl font-bold mb-4 group-hover:text-violet-400 transition-colors">
+                <div key={index} className="group glass-card p-8 rounded-2xl animate-shimmer">
+                  <BenefitIcon className="w-12 h-12 text-indigo-400 mb-6 group-hover:scale-105 transition-transform" />
+                  <h3 className="text-2xl font-bold mb-4 font-outfit text-zinc-100 group-hover:text-indigo-300 transition-colors">
                     {benefit.title}
                   </h3>
-                  <p className="text-neutral-300 leading-relaxed">
+                  <p className="text-zinc-400 leading-relaxed font-light">
                     {benefit.description}
                   </p>
                 </div>
@@ -355,25 +365,25 @@ const Services = () => {
       </section>
 
       {/* CTA */}
-      <section className="py-20">
+      <section className="py-24 border-t border-white/[0.04] relative z-10">
         <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-4xl md:text-6xl font-bold mb-8" style={{ fontFamily: 'Playfair Display, serif' }}>
-            Ready to <span className="text-red-400">kill</span> your busywork?
+          <h2 className="text-4xl md:text-6xl font-bold mb-8 font-outfit">
+            Ready to <span className="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">optimize</span> your business?
           </h2>
           
-          <p className="text-xl text-neutral-300 mb-12">
+          <p className="text-xl text-zinc-400 mb-12 font-light">
             Let's identify your biggest bottleneck and break it. No forms, no demos—just results.
           </p>
           
           <Link 
             href="/contact"
-            className="group bg-gradient-to-r from-violet-600 to-red-600 hover:from-violet-500 hover:to-red-500 px-12 py-4 rounded-lg text-xl font-bold transition-all duration-300 hover:scale-105 inline-flex items-center"
+            className="group bg-gradient-to-r from-indigo-500 to-cyan-500 hover:opacity-90 px-12 py-4 rounded-full text-xl font-semibold transition-all duration-300 hover:scale-102 inline-flex items-center text-zinc-950"
           >
             Talk to Us
             <ArrowRight className="w-6 h-6 ml-2 group-hover:translate-x-1 transition-transform" />
           </Link>
           
-          <p className="text-neutral-400 mt-4 text-sm">Action over paperwork. Always.</p>
+          <p className="text-zinc-500 mt-5 text-sm font-light">Action over paperwork. Always.</p>
         </div>
       </section>
     </div>

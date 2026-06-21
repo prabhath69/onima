@@ -87,16 +87,17 @@ const Work = () => {
   ];
 
   return (
-    <div className="min-h-screen pt-28">
+    <div className="min-h-screen pt-28 relative overflow-hidden">
+
       {/* Hero */}
-      <section className="py-20">
+      <section className="py-20 relative z-10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h1 className="text-5xl md:text-7xl font-bold mb-6" style={{ fontFamily: 'Playfair Display, serif' }}>
-              <span className="text-red-400">Killed</span> Work,<br />
-              <span className="text-violet-400">Proven</span> Results
+            <h1 className="text-5xl md:text-7xl font-bold mb-6 font-outfit tracking-tight">
+              Automated Pipelines,<br />
+              <span className="bg-gradient-to-r from-indigo-400 via-violet-400 to-cyan-400 bg-clip-text text-transparent">Proven Results</span>
             </h1>
-            <p className="text-xl text-neutral-300 max-w-3xl mx-auto">
+            <p className="text-xl text-zinc-400 max-w-3xl mx-auto font-light">
               Real businesses. Real bottlenecks. Real transformations. 
               See how we've eliminated millions of hours of busywork.
             </p>
@@ -105,17 +106,17 @@ const Work = () => {
       </section>
 
       {/* Case Study Navigation */}
-      <section className="py-12 border-b border-neutral-800">
+      <section className="py-12 border-b border-white/[0.04] relative z-10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-wrap justify-center gap-4">
             {caseStudies.map((study, index) => (
               <button
                 key={index}
                 onClick={() => setActiveCase(index)}
-                className={`px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${
+                className={`px-6 py-3 rounded-full font-semibold transition-all duration-500 cursor-pointer ${
                   activeCase === index
-                    ? 'bg-gradient-to-r from-violet-600 to-red-600 text-white'
-                    : 'bg-neutral-800 text-neutral-300 hover:bg-neutral-700'
+                    ? 'bg-gradient-to-r from-indigo-500 to-cyan-500 text-zinc-950 shadow-lg shadow-indigo-500/20'
+                    : 'border border-white/[0.06] bg-white/[0.02] text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.06]'
                 }`}
               >
                 {study.industry}
@@ -126,44 +127,44 @@ const Work = () => {
       </section>
 
       {/* Active Case Study */}
-      <section className="py-20">
+      <section className="py-20 relative z-10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-16 items-start">
             {/* Case Details */}
             <div>
-              <div className="text-sm text-violet-400 mb-2">{caseStudies[activeCase].industry}</div>
-              <h2 className="text-4xl font-bold mb-6" style={{ fontFamily: 'Playfair Display, serif' }}>
+              <div className="text-xs font-semibold uppercase tracking-wider text-cyan-400 mb-2">{caseStudies[activeCase].industry}</div>
+              <h2 className="text-4xl font-bold mb-6 font-outfit text-zinc-100">
                 {caseStudies[activeCase].title}
               </h2>
               
               <div className="flex flex-col gap-6 mb-8">
                 <div>
-                  <h3 className="text-xl font-semibold text-red-400 mb-2">The Challenge</h3>
-                  <p className="text-neutral-300 leading-relaxed">{caseStudies[activeCase].challenge}</p>
+                  <h3 className="text-xl font-semibold text-zinc-300 mb-2 font-outfit">The Challenge</h3>
+                  <p className="text-zinc-400 font-light leading-relaxed">{caseStudies[activeCase].challenge}</p>
                 </div>
                 
                 <div>
-                  <h3 className="text-xl font-semibold text-violet-400 mb-2">Our Solution</h3>
-                  <p className="text-neutral-300 leading-relaxed">{caseStudies[activeCase].solution}</p>
+                  <h3 className="text-xl font-semibold text-indigo-300 mb-2 font-outfit">Our Solution</h3>
+                  <p className="text-zinc-400 font-light leading-relaxed">{caseStudies[activeCase].solution}</p>
                 </div>
               </div>
 
               {/* Key Results */}
               <div className="grid grid-cols-2 gap-4 mb-8">
                 {Object.entries(caseStudies[activeCase].results).map(([key, value], index) => (
-                  <div key={index} className="bg-neutral-900 p-4 rounded-lg border border-neutral-800">
-                    <div className="text-2xl font-bold text-violet-400">{value}</div>
-                    <div className="text-sm text-neutral-400 capitalize">{key.replace(/([A-Z])/g, ' $1')}</div>
+                  <div key={index} className="glass-card p-5 rounded-2xl animate-shimmer">
+                    <div className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">{value}</div>
+                    <div className="text-sm text-zinc-400 capitalize mt-1 font-light">{key.replace(/([A-Z])/g, ' $1')}</div>
                   </div>
                 ))}
               </div>
 
               {/* Testimonial */}
-              <div className="bg-gradient-to-r from-violet-900/20 to-red-900/20 p-6 rounded-lg border border-violet-500/30">
-                <blockquote className="text-lg italic mb-4">
+              <div className="glass-card p-6 rounded-2xl animate-shimmer">
+                <blockquote className="text-lg italic text-zinc-200 mb-4 font-light leading-relaxed">
                   "{caseStudies[activeCase].testimonial}"
                 </blockquote>
-                <cite className="text-violet-400 font-semibold">
+                <cite className="text-cyan-400 font-medium font-outfit not-italic">
                   — {caseStudies[activeCase].clientRole}
                 </cite>
               </div>
@@ -171,31 +172,31 @@ const Work = () => {
 
             {/* Metrics Visualization */}
             <div className="flex flex-col gap-6">
-              <h3 className="text-2xl font-bold mb-6">Before vs After</h3>
+              <h3 className="text-2xl font-bold mb-6 font-outfit text-zinc-200">Before vs After</h3>
               {caseStudies[activeCase].metrics.map((metric, index) => {
                 const improvementVal = parseFloat(metric.improvement) || 0;
                 return (
-                  <div key={index} className="bg-neutral-900 p-6 rounded-lg border border-neutral-800">
+                  <div key={index} className="glass-card p-6 rounded-2xl animate-shimmer">
                     <div className="flex justify-between items-center mb-4">
-                      <h4 className="font-semibold">{metric.label}</h4>
-                      <div className="text-green-400 font-bold">+{metric.improvement}</div>
+                      <h4 className="font-semibold text-zinc-200 font-outfit">{metric.label}</h4>
+                      <div className="text-cyan-400 font-bold">+{metric.improvement}</div>
                     </div>
                     
                     <div className="flex flex-col gap-3">
                       <div className="flex justify-between items-center">
-                        <span className="text-red-300 text-sm">Before:</span>
-                        <span className="text-red-300">{metric.before}</span>
+                        <span className="text-zinc-500 text-sm">Before:</span>
+                        <span className="text-zinc-400 line-through">{metric.before}</span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-green-400 text-sm">After:</span>
-                        <span className="text-green-400 font-semibold">{metric.after}</span>
+                        <span className="text-cyan-400 text-sm font-medium">After:</span>
+                        <span className="text-cyan-400 font-semibold">{metric.after}</span>
                       </div>
                     </div>
                     
                     {/* Progress Bar */}
-                    <div className="mt-4 bg-neutral-800 rounded-full h-2 overflow-hidden">
+                    <div className="mt-4 bg-zinc-950 rounded-full h-2 overflow-hidden">
                       <div 
-                        className="h-full bg-gradient-to-r from-violet-500 to-green-400 transition-all duration-1000"
+                        className="h-full bg-gradient-to-r from-indigo-500 to-cyan-400 transition-all duration-1000"
                         style={{ width: `${Math.min(improvementVal, 100)}%` }}
                       ></div>
                     </div>
@@ -208,54 +209,68 @@ const Work = () => {
       </section>
 
       {/* Impact Summary */}
-      <section className="py-20 bg-neutral-900/50">
+      <section className="py-24 glass-section border-t border-white/[0.04] relative z-10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6" style={{ fontFamily: 'Playfair Display, serif' }}>
-              Collective <span className="text-violet-400">Impact</span>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 font-outfit">
+              Collective <span className="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">Impact</span>
             </h2>
-            <p className="text-xl text-neutral-300">
+            <p className="text-xl text-zinc-400 font-light">
               Across all our deployments, the numbers speak for themselves.
             </p>
           </div>
 
           <div className="grid md:grid-cols-4 gap-8">
-            {[
-              { icon: Clock, number: "2.3M", label: "Hours Reclaimed", color: "text-violet-400" },
-              { icon: DollarSign, number: "$12.8M", label: "Cost Savings", color: "text-green-400" },
-              { icon: TrendingUp, number: "340%", label: "Avg Improvement", color: "text-red-400" },
-              { icon: Users, number: "97%", label: "Client Satisfaction", color: "text-violet-400" }
-            ].map((stat, index) => (
-              <div key={index} className="text-center group">
-                <div className="bg-neutral-900 p-8 rounded-lg border border-neutral-800 hover:border-violet-500 transition-all duration-300 hover:scale-105">
-                  <stat.icon className={`w-12 h-12 ${stat.color} mx-auto mb-4 group-hover:scale-110 transition-transform`} />
-                  <div className={`text-4xl font-bold ${stat.color} mb-2`}>{stat.number}</div>
-                  <div className="text-neutral-300">{stat.label}</div>
+            <div className="group glass-card p-8 rounded-2xl md:col-span-2 flex flex-col justify-center items-center text-center animate-shimmer">
+              <Clock className="w-12 h-12 text-indigo-400 mb-4 group-hover:scale-105 transition-transform" />
+              <div className="text-5xl font-bold bg-gradient-to-r from-indigo-400 via-violet-400 to-cyan-400 bg-clip-text text-transparent mb-2 font-outfit">2.3M</div>
+              <div className="text-zinc-400 font-light text-lg">Hours Reclaimed</div>
+            </div>
+
+            <div className="group glass-card p-8 rounded-2xl md:col-span-2 flex flex-col justify-center items-center text-center animate-shimmer">
+              <DollarSign className="w-12 h-12 text-indigo-400 mb-4 group-hover:scale-105 transition-transform" />
+              <div className="text-5xl font-bold bg-gradient-to-r from-indigo-400 via-violet-400 to-cyan-400 bg-clip-text text-transparent mb-2 font-outfit">$12.8M</div>
+              <div className="text-zinc-400 font-light text-lg">Cost Savings</div>
+            </div>
+
+            <div className="group glass-card p-8 rounded-2xl md:col-span-1 flex flex-col justify-center items-center text-center animate-shimmer">
+              <TrendingUp className="w-12 h-12 text-indigo-400 mb-4 group-hover:scale-105 transition-transform" />
+              <div className="text-4xl font-bold bg-gradient-to-r from-indigo-400 via-violet-400 to-cyan-400 bg-clip-text text-transparent mb-2 font-outfit">340%</div>
+              <div className="text-zinc-400 font-light">Avg Improvement</div>
+            </div>
+
+            <div className="group glass-card p-8 rounded-2xl md:col-span-3 flex flex-col md:flex-row justify-between items-center gap-6 px-12 animate-shimmer">
+              <div className="flex items-center gap-4">
+                <Users className="w-12 h-12 text-indigo-400 group-hover:scale-105 transition-transform" />
+                <div className="text-left">
+                  <h4 className="text-xl font-bold text-zinc-100 font-outfit">Client Satisfaction</h4>
+                  <p className="text-sm text-zinc-400 font-light max-w-md">Our focus is on creating real partnerships, delivering long-term reliability.</p>
                 </div>
               </div>
-            ))}
+              <div className="text-5xl font-bold bg-gradient-to-r from-indigo-400 via-violet-400 to-cyan-400 bg-clip-text text-transparent font-outfit">97%</div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="py-20">
+      <section className="py-24 border-t border-white/[0.04] relative z-10">
         <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-4xl md:text-6xl font-bold mb-8 leading-tight" style={{ fontFamily: 'Playfair Display, serif' }}>
-            Ready to join the <span className="text-red-400">revolution</span>?
+          <h2 className="text-4xl md:text-6xl font-bold mb-8 leading-tight font-outfit">
+            Ready to scale your <span className="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">operations</span>?
           </h2>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link 
               href="/contact"
-              className="group bg-gradient-to-r from-violet-600 to-red-600 hover:from-violet-500 hover:to-red-500 px-12 py-4 rounded-lg text-xl font-bold transition-all duration-300 hover:scale-105 inline-flex items-center justify-center"
+              className="group bg-gradient-to-r from-indigo-500 to-cyan-500 hover:opacity-90 px-12 py-4 rounded-full text-xl font-semibold transition-all duration-300 hover:scale-102 inline-flex items-center justify-center text-zinc-950"
             >
               Start Your Transformation
               <ArrowRight className="w-6 h-6 ml-2 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
           
-          <p className="text-neutral-400 mt-4 text-sm">No forms. No demos. Just results.</p>
+          <p className="text-zinc-500 mt-5 text-sm font-light">No forms. No demos. Just results.</p>
         </div>
       </section>
     </div>

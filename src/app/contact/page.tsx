@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from 'react';
+import { Mail, Phone, MapPin, Clock, Send, CheckCircle, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-import { Mail, Phone, MapPin, Clock, Send, CheckCircle } from 'lucide-react';
 
 const Contact = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -10,30 +10,28 @@ const Contact = () => {
   const [formData, setFormData] = useState({ timeDrain: '', email: '' });
 
   const handleFormSubmit = () => {
-    // Here you would typically send the data to your backend
     console.log('Form submitted:', formData);
-    
     setIsModalOpen(false);
     setShowSuccessNotification(true);
     setFormData({ timeDrain: '', email: '' });
     
-    // Hide notification after 5 seconds
     setTimeout(() => {
       setShowSuccessNotification(false);
     }, 5000);
   };
 
   return (
-    <div className="min-h-screen pt-28">
+    <div className="min-h-screen pt-28 relative overflow-hidden">
+
       {/* Hero */}
-      <section className="py-20">
+      <section className="py-20 relative z-10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h1 className="text-5xl md:text-7xl font-bold mb-6" style={{ fontFamily: 'Playfair Display, serif' }}>
-              Let's <span className="text-red-400">Break</span> Your<br />
-              Biggest <span className="text-violet-400">Bottleneck</span>
+            <h1 className="text-5xl md:text-7xl font-bold mb-6 font-outfit tracking-tight">
+              Let's <span className="bg-gradient-to-r from-indigo-400 via-violet-400 to-cyan-400 bg-clip-text text-transparent">Optimize</span> Your<br />
+              Biggest Operations
             </h1>
-            <p className="text-xl text-neutral-300 max-w-3xl mx-auto">
+            <p className="text-xl text-zinc-400 max-w-3xl mx-auto font-light">
               No forms. No demos. No sales pitches. Just a conversation about your biggest time drain 
               and how we can eliminate it permanently.
             </p>
@@ -42,81 +40,81 @@ const Contact = () => {
       </section>
 
       {/* Main CTA */}
-      <section className="py-20">
+      <section className="py-12 relative z-10">
         <div className="max-w-4xl mx-auto px-6">
-          <div className="bg-gradient-to-br from-violet-900/20 to-red-900/20 p-12 rounded-lg border border-violet-500/30 text-center">
-            <h2 className="text-4xl font-bold mb-6" style={{ fontFamily: 'Playfair Display, serif' }}>
+          <div className="glass-card p-12 rounded-2xl text-center animate-shimmer">
+            <h2 className="text-4xl font-bold mb-6 font-outfit text-zinc-100">
               Show us your worst bottleneck.
             </h2>
             
-            <p className="text-xl text-neutral-300 mb-8">
+            <p className="text-xl text-zinc-400 mb-8 font-light">
               Tell us what's killing your team's productivity. We'll show you how to eliminate it.
             </p>
             
             <button 
               onClick={() => setIsModalOpen(true)}
-              className="group bg-gradient-to-r from-violet-600 to-red-600 hover:from-violet-500 hover:to-red-500 px-12 py-4 rounded-lg text-xl font-bold transition-all duration-300 hover:scale-105 inline-flex items-center"
+              className="group bg-gradient-to-r from-indigo-500 to-cyan-500 hover:opacity-90 px-12 py-4 rounded-full text-xl font-semibold transition-all duration-300 hover:scale-102 inline-flex items-center text-zinc-950 cursor-pointer"
             >
               Let's Break It
-              <Send className="w-6 h-6 ml-2 group-hover:translate-x-1 transition-transform" />
+              <Send className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
             </button>
             
-            <p className="text-neutral-400 mt-4 text-sm">Action over paperwork.</p>
+            <p className="text-zinc-500 mt-4 text-sm font-light">Action over paperwork.</p>
           </div>
         </div>
       </section>
 
       {/* Contact Information */}
-      <section className="py-20 bg-neutral-900/30">
+      <section className="py-24 glass-section border-t border-white/[0.04] relative z-10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-2 gap-16">
             {/* Contact Details */}
             <div>
-              <h2 className="text-4xl font-bold mb-8" style={{ fontFamily: 'Playfair Display, serif' }}>
-                Get in <span className="text-violet-400">Touch</span>
+              <h2 className="text-4xl font-bold mb-8 font-outfit">
+                Get in <span className="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">Touch</span>
               </h2>
               
               <div className="flex flex-col gap-6 mb-8">
                 <div className="flex items-center">
-                  <Mail className="w-6 h-6 text-violet-400 mr-4" />
+                  <Mail className="w-6 h-6 text-indigo-400 mr-4" />
                   <div>
-                    <div className="font-semibold">Email</div>
-                    <a href="mailto:build@onima.in" className="text-violet-400 hover:text-violet-300 transition-colors">
+                    <div className="font-semibold text-zinc-200 font-outfit">Email</div>
+                    <a href="mailto:build@onima.in" className="text-cyan-400 hover:text-cyan-300 transition-colors">
                       build@onima.in
                     </a>
                   </div>
                 </div>
                 
                 <div className="flex items-center">
-                  <Clock className="w-6 h-6 text-violet-400 mr-4" />
+                  <Clock className="w-6 h-6 text-indigo-400 mr-4" />
                   <div>
-                    <div className="font-semibold">Response Time</div>
-                    <div className="text-neutral-300">Within 2 hours (usually faster)</div>
+                    <div className="font-semibold text-zinc-200 font-outfit">Response Time</div>
+                    <div className="text-zinc-400 font-light">Within 2 hours (usually faster)</div>
                   </div>
                 </div>
                 
                 <div className="flex items-center">
-                  <MapPin className="w-6 h-6 text-violet-400 mr-4" />
+                  <MapPin className="w-6 h-6 text-indigo-400 mr-4" />
                   <div>
-                    <div className="font-semibold">Location</div>
-                    <div className="text-neutral-300">Global (Remote-First)</div>
+                    <div className="font-semibold text-zinc-200 font-outfit">Location</div>
+                    <div className="text-zinc-400 font-light">Global (Remote-First)</div>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-neutral-900 p-6 rounded-lg border border-neutral-800">
-                <h3 className="text-xl font-bold mb-4">What Happens Next?</h3>
-                <div className="flex flex-col gap-3 text-neutral-300">
+              <div className="glass-card p-6 rounded-2xl animate-shimmer">
+                <h3 className="text-xl font-bold mb-4 font-outfit text-zinc-100">What Happens Next?</h3>
+                <div className="flex flex-col gap-3 text-zinc-300 font-light">
                   <div className="flex items-start">
-                    <CheckCircle className="w-5 h-5 text-green-400 mr-3 mt-0.5 flex-shrink-0" />
+                    <CheckCircle className="w-5 h-5 text-cyan-400 mr-3 mt-0.5 flex-shrink-0" />
                     <span>We analyze your bottleneck within 24 hours</span>
                   </div>
                   <div className="flex items-start">
-                    <CheckCircle className="w-5 h-5 text-green-400 mr-3 mt-0.5 flex-shrink-0" />
+                    <CheckCircle className="w-5 h-5 text-cyan-400 mr-3 mt-0.5 flex-shrink-0" />
                     <span>You get a custom action plan (not a generic proposal)</span>
                   </div>
                   <div className="flex items-start">
-                    <CheckCircle className="w-5 h-5 text-green-400 mr-3 mt-0.5 flex-shrink-0" />
+                    <CheckCircle className="w-5 h-5 text-cyan-400 mr-3 mt-0.5 flex-shrink-0" />
                     <span>If it's a fit, we deploy your solution within 48 hours</span>
                   </div>
                 </div>
@@ -125,42 +123,42 @@ const Contact = () => {
 
             {/* Why Choose Direct Contact */}
             <div>
-              <h2 className="text-4xl font-bold mb-8" style={{ fontFamily: 'Playfair Display, serif' }}>
-                Why <span className="text-red-400">Direct</span> Contact?
+              <h2 className="text-4xl font-bold mb-8 font-outfit">
+                Why <span className="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">Direct</span> Contact?
               </h2>
               
               <div className="flex flex-col gap-8">
-                <div className="border-l-4 border-violet-500 pl-6">
-                  <h3 className="text-xl font-bold mb-2 text-violet-400">No Generic Solutions</h3>
-                  <p className="text-neutral-300">
+                <div className="border-l-4 border-indigo-500/40 pl-6">
+                  <h3 className="text-xl font-bold mb-2 text-indigo-300 font-outfit">No Generic Solutions</h3>
+                  <p className="text-zinc-400 font-light">
                     Every business is different. We don't believe in one-size-fits-all automation. 
                     Your bottleneck gets a custom solution, not a template.
                   </p>
                 </div>
                 
-                <div className="border-l-4 border-red-500 pl-6">
-                  <h3 className="text-xl font-bold mb-2 text-red-400">Speed Over Process</h3>
-                  <p className="text-neutral-300">
+                <div className="border-l-4 border-cyan-500/40 pl-6">
+                  <h3 className="text-xl font-bold mb-2 text-cyan-300 font-outfit">Speed Over Process</h3>
+                  <p className="text-zinc-400 font-light">
                     While others schedule discovery calls and send proposals, we're already building 
                     your solution. Time is money—we don't waste either.
                   </p>
                 </div>
                 
-                <div className="border-l-4 border-violet-500 pl-6">
-                  <h3 className="text-xl font-bold mb-2 text-violet-400">Results-First Approach</h3>
-                  <p className="text-neutral-300">
+                <div className="border-l-4 border-indigo-500/40 pl-6">
+                  <h3 className="text-xl font-bold mb-2 text-indigo-300 font-outfit">Results-First Approach</h3>
+                  <p className="text-zinc-400 font-light">
                     We're not here to sell you features. We're here to solve your problem. 
                     If we can't deliver measurable results, we'll tell you upfront.
                   </p>
                 </div>
               </div>
 
-              <div className="mt-8 bg-gradient-to-r from-violet-900/20 to-red-900/20 p-6 rounded-lg border border-violet-500/30">
-                <blockquote className="text-lg italic mb-4">
+              <div className="mt-8 glass-card p-6 rounded-2xl animate-shimmer">
+                <blockquote className="text-lg italic text-zinc-200 mb-4 font-light leading-relaxed">
                   "Most agencies want to schedule a call to schedule another call. 
                   Onima sent us a working solution before our first meeting ended."
                 </blockquote>
-                <cite className="text-violet-400 font-semibold">
+                <cite className="text-indigo-400 font-medium font-outfit not-italic">
                   — VP of Operations, SaaS Company
                 </cite>
               </div>
@@ -169,37 +167,41 @@ const Contact = () => {
         </div>
       </section>
 
-      {/* Alternative Contact Methods */}
-      <section className="py-20">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold mb-8">Prefer a Different Approach?</h2>
+      {/* Alternative Contact Methods - Bento Styled */}
+      <section className="py-24 border-t border-white/[0.04] relative z-10">
+        <div className="max-w-7xl mx-auto px-6">
+          <h2 className="text-4xl font-bold mb-12 text-center font-outfit">Prefer a Different Approach?</h2>
           
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-neutral-900 p-8 rounded-lg border border-neutral-800 hover:border-violet-500 transition-all duration-300">
-              <h3 className="text-xl font-bold mb-4">Quick Question?</h3>
-              <p className="text-neutral-300 mb-6">
-                Send us a quick email with your question. We respond to every message personally.
-              </p>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="group glass-card p-8 rounded-2xl md:col-span-2 flex flex-col justify-between animate-shimmer">
+              <div>
+                <h3 className="text-2xl font-bold mb-4 font-outfit text-zinc-100 group-hover:text-indigo-300 transition-colors">Quick Question?</h3>
+                <p className="text-zinc-400 mb-8 font-light">
+                  Send us a quick email with your question. We respond to every message personally.
+                </p>
+              </div>
               <a 
                 href="mailto:build@onima.in"
-                className="inline-flex items-center text-violet-400 hover:text-violet-300 font-semibold transition-colors"
+                className="inline-flex items-center text-cyan-400 hover:text-cyan-300 font-semibold transition-colors font-outfit"
               >
                 <Mail className="w-5 h-5 mr-2" />
                 build@onima.in
               </a>
             </div>
             
-            <div className="bg-neutral-900 p-8 rounded-lg border border-neutral-800 hover:border-violet-500 transition-all duration-300">
-              <h3 className="text-xl font-bold mb-4">See Our Work First?</h3>
-              <p className="text-neutral-300 mb-6">
-                Check out our case studies and see how we've solved similar problems for other businesses.
-              </p>
+            <div className="group glass-card p-8 rounded-2xl md:col-span-1 flex flex-col justify-between animate-shimmer">
+              <div>
+                <h3 className="text-2xl font-bold mb-4 font-outfit text-zinc-100 group-hover:text-indigo-300 transition-colors">See Our Work First?</h3>
+                <p className="text-zinc-400 mb-8 font-light">
+                  Check out our case studies and see how we've solved similar problems.
+                </p>
+              </div>
               <Link 
                 href="/work"
-                className="inline-flex items-center text-violet-400 hover:text-violet-300 font-semibold transition-colors"
+                className="inline-flex items-center text-indigo-400 hover:text-indigo-300 font-semibold transition-colors font-outfit group"
               >
                 View Case Studies
-                <CheckCircle className="w-5 h-5 ml-2" />
+                <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
           </div>
@@ -209,16 +211,16 @@ const Contact = () => {
       {/* Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 px-6">
-          <div className="bg-neutral-900 rounded-lg border border-neutral-700 p-8 max-w-md w-full">
-            <h3 className="text-2xl font-bold mb-6">Let's Break Your Bottleneck</h3>
+          <div className="glass-panel p-8 max-w-md w-full rounded-2xl">
+            <h3 className="text-2xl font-bold mb-6 font-outfit text-zinc-100">Let's Break Your Bottleneck</h3>
             
-            <div className="flex flex-col gap-4 mb-6">
+            <div className="flex flex-col gap-5 mb-6">
               <div>
-                <label className="block text-sm text-neutral-300 mb-2">
+                <label className="block text-sm text-zinc-400 mb-2 font-light">
                   What's your biggest time drain & how many hours per week does this cost you?
                 </label>
                 <textarea 
-                  className="w-full bg-neutral-800 border border-neutral-600 rounded p-3 text-white placeholder-neutral-400" 
+                  className="w-full bg-zinc-950 border border-white/[0.08] rounded-xl p-3 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-indigo-500/50 transition-colors font-light" 
                   rows={3} 
                   placeholder="Email follow-ups take 15+ hours per week..."
                   value={formData.timeDrain}
@@ -227,10 +229,10 @@ const Contact = () => {
               </div>
               
               <div>
-                <label className="block text-sm text-neutral-300 mb-2">What's your email?</label>
+                <label className="block text-sm text-zinc-400 mb-2 font-light">What's your email?</label>
                 <input 
                   type="email" 
-                  className="w-full bg-neutral-800 border border-neutral-600 rounded p-3 text-white placeholder-neutral-400" 
+                  className="w-full bg-zinc-950 border border-white/[0.08] rounded-xl p-3 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-indigo-500/50 transition-colors font-light" 
                   placeholder="your@email.com"
                   value={formData.email}
                   onChange={(e) => setFormData({...formData, email: e.target.value})}
@@ -242,13 +244,13 @@ const Contact = () => {
               <button 
                 onClick={handleFormSubmit}
                 disabled={!formData.timeDrain || !formData.email}
-                className="flex-1 bg-gradient-to-r from-violet-600 to-red-600 hover:from-violet-500 hover:to-red-500 py-3 rounded font-bold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 bg-gradient-to-r from-indigo-500 to-cyan-500 hover:opacity-90 py-3 rounded-full text-zinc-950 font-bold transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
               >
                 Break It
               </button>
               <button 
                 onClick={() => setIsModalOpen(false)}
-                className="px-6 py-3 border border-neutral-600 rounded hover:border-neutral-500 transition-colors"
+                className="px-6 py-3 border border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.06] rounded-full text-zinc-300 font-medium transition-colors cursor-pointer"
               >
                 Cancel
               </button>
@@ -260,8 +262,8 @@ const Contact = () => {
       {/* Success Notification */}
       {showSuccessNotification && (
         <div className="fixed bottom-6 right-6 z-50 animate-slide-up">
-          <div className="bg-gradient-to-r from-violet-600 to-red-600 text-white px-6 py-4 rounded-lg shadow-2xl border border-violet-500/50">
-            <p className="font-medium">Sent. We'll get back fast—with an action plan, not a form.</p>
+          <div className="bg-gradient-to-r from-indigo-500 to-cyan-500 text-zinc-950 px-6 py-4 rounded-full shadow-2xl border border-white/[0.05] font-semibold">
+            <p>Sent. We'll get back fast—with an action plan, not a form.</p>
           </div>
         </div>
       )}
