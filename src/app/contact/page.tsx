@@ -1,4 +1,7 @@
+"use client";
+
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { Mail, Phone, MapPin, Clock, Send, CheckCircle } from 'lucide-react';
 
 const Contact = () => {
@@ -21,7 +24,7 @@ const Contact = () => {
   };
 
   return (
-    <div className="min-h-screen pt-20">
+    <div className="min-h-screen pt-28">
       {/* Hero */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-6">
@@ -73,7 +76,7 @@ const Contact = () => {
                 Get in <span className="text-violet-400">Touch</span>
               </h2>
               
-              <div className="space-y-6 mb-8">
+              <div className="flex flex-col gap-6 mb-8">
                 <div className="flex items-center">
                   <Mail className="w-6 h-6 text-violet-400 mr-4" />
                   <div>
@@ -103,7 +106,7 @@ const Contact = () => {
 
               <div className="bg-neutral-900 p-6 rounded-lg border border-neutral-800">
                 <h3 className="text-xl font-bold mb-4">What Happens Next?</h3>
-                <div className="space-y-3 text-neutral-300">
+                <div className="flex flex-col gap-3 text-neutral-300">
                   <div className="flex items-start">
                     <CheckCircle className="w-5 h-5 text-green-400 mr-3 mt-0.5 flex-shrink-0" />
                     <span>We analyze your bottleneck within 24 hours</span>
@@ -126,7 +129,7 @@ const Contact = () => {
                 Why <span className="text-red-400">Direct</span> Contact?
               </h2>
               
-              <div className="space-y-8">
+              <div className="flex flex-col gap-8">
                 <div className="border-l-4 border-violet-500 pl-6">
                   <h3 className="text-xl font-bold mb-2 text-violet-400">No Generic Solutions</h3>
                   <p className="text-neutral-300">
@@ -191,13 +194,13 @@ const Contact = () => {
               <p className="text-neutral-300 mb-6">
                 Check out our case studies and see how we've solved similar problems for other businesses.
               </p>
-              <a 
+              <Link 
                 href="/work"
                 className="inline-flex items-center text-violet-400 hover:text-violet-300 font-semibold transition-colors"
               >
                 View Case Studies
                 <CheckCircle className="w-5 h-5 ml-2" />
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -209,7 +212,7 @@ const Contact = () => {
           <div className="bg-neutral-900 rounded-lg border border-neutral-700 p-8 max-w-md w-full">
             <h3 className="text-2xl font-bold mb-6">Let's Break Your Bottleneck</h3>
             
-            <div className="space-y-4 mb-6">
+            <div className="flex flex-col gap-4 mb-6">
               <div>
                 <label className="block text-sm text-neutral-300 mb-2">
                   What's your biggest time drain & how many hours per week does this cost you?
@@ -235,7 +238,7 @@ const Contact = () => {
               </div>
             </div>
             
-            <div className="flex space-x-4">
+            <div className="flex gap-4">
               <button 
                 onClick={handleFormSubmit}
                 disabled={!formData.timeDrain || !formData.email}

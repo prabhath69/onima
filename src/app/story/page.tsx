@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import { Users, Target, Lightbulb, Award, Shield, Heart } from 'lucide-react';
 
@@ -78,7 +80,7 @@ const Story = () => {
   }, []);
 
   return (
-    <div className="min-h-screen pt-20">
+    <div className="min-h-screen pt-28">
       {/* Hero */}
       <section id="story-hero" className="py-20">
         <div className="max-w-7xl mx-auto px-6">
@@ -103,7 +105,7 @@ const Story = () => {
               <h2 className="text-4xl font-bold mb-6" style={{ fontFamily: 'Playfair Display, serif' }}>
                 The <span className="text-red-400">Human Crisis</span>
               </h2>
-              <div className="space-y-6 text-lg text-neutral-300 leading-relaxed">
+              <div className="flex flex-col gap-6 text-lg text-neutral-300 leading-relaxed">
                 <p>
                   Burnout isn't a personal failing—it's a <strong className="text-white">system failure</strong>. 
                   When talented people quit because they're drowning in busywork, the system is broken.
@@ -123,7 +125,7 @@ const Story = () => {
             <div className={`transition-all duration-1000 delay-400 ${isVisible.problem ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}>
               <div className="bg-gradient-to-br from-red-900/20 to-neutral-900 p-8 rounded-lg border border-red-500/30">
                 <h3 className="text-2xl font-bold text-red-400 mb-6">The Breaking Point Stats</h3>
-                <div className="space-y-4">
+                <div className="flex flex-col gap-4">
                   <div className="flex justify-between items-center">
                     <span>Time spent on busywork</span>
                     <span className="text-red-400 font-bold">60%</span>
@@ -161,36 +163,39 @@ const Story = () => {
 
           <div className="relative">
             {/* Timeline Line */}
-            <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-violet-500 to-red-500"></div>
+            <div className="absolute left-4 md:left-1/2 transform -translate-x-1/2 w-0.5 md:w-1 h-full bg-gradient-to-b from-violet-500 to-red-500"></div>
             
-            <div className="space-y-16">
-              {timelineEvents.map((event, index) => (
-                <div 
-                  key={index}
-                  className={`relative flex items-center ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'}`}
-                  onMouseEnter={() => setActiveTimeline(index)}
-                >
-                  {/* Timeline Node */}
-                  <div className={`absolute left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full border-4 flex items-center justify-center transition-all duration-300 ${
-                    activeTimeline === index 
-                      ? 'bg-gradient-to-r from-violet-500 to-red-500 border-white scale-110' 
-                      : 'bg-neutral-900 border-violet-500'
-                  }`}>
-                    <event.icon className="w-6 h-6 text-white" />
-                  </div>
-                  
-                  {/* Content */}
-                  <div className={`w-5/12 ${index % 2 === 0 ? 'pr-8 text-right' : 'pl-8 text-left'}`}>
-                    <div className={`bg-neutral-900 p-6 rounded-lg border transition-all duration-300 ${
-                      activeTimeline === index ? 'border-violet-500 scale-105' : 'border-neutral-800'
+            <div className="flex flex-col gap-12 md:gap-16">
+              {timelineEvents.map((event, index) => {
+                const IconComponent = event.icon;
+                return (
+                  <div 
+                    key={index}
+                    className={`relative flex items-start md:items-center flex-row ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}
+                    onMouseEnter={() => setActiveTimeline(index)}
+                  >
+                    {/* Timeline Node */}
+                    <div className={`absolute left-4 md:left-1/2 transform -translate-x-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full border-4 flex items-center justify-center transition-all duration-300 z-10 ${
+                      activeTimeline === index 
+                        ? 'bg-gradient-to-r from-violet-500 to-red-500 border-white scale-110' 
+                        : 'bg-neutral-900 border-violet-500'
                     }`}>
-                      <div className="text-violet-400 font-bold text-lg mb-2">{event.year}</div>
-                      <h3 className="text-xl font-bold mb-3">{event.title}</h3>
-                      <p className="text-neutral-300">{event.description}</p>
+                      <IconComponent className="w-5 h-5 md:w-6 md:h-6 text-white" />
+                    </div>
+                    
+                    {/* Content */}
+                    <div className={`w-full md:w-5/12 pl-12 md:pl-0 ${index % 2 === 0 ? 'md:pr-8 md:text-right' : 'md:pl-8 md:text-left'}`}>
+                      <div className={`bg-neutral-900 p-6 rounded-lg border transition-all duration-300 ${
+                        activeTimeline === index ? 'border-violet-500 scale-105' : 'border-neutral-800'
+                      }`}>
+                        <div className="text-violet-400 font-bold text-lg mb-2">{event.year}</div>
+                        <h3 className="text-xl font-bold mb-3">{event.title}</h3>
+                        <p className="text-neutral-300">{event.description}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
@@ -209,19 +214,22 @@ const Story = () => {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {values.map((value, index) => (
-              <div key={index} className={`group transition-all duration-700 delay-${index * 200} ${isVisible.values ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-                <div className="bg-neutral-900 p-8 rounded-lg border border-neutral-800 hover:border-violet-500 transition-all duration-300 hover:scale-105 h-full">
-                  <value.icon className="w-12 h-12 text-violet-400 mb-6 group-hover:scale-110 transition-transform" />
-                  <h3 className="text-2xl font-bold mb-4 group-hover:text-violet-400 transition-colors">
-                    {value.title}
-                  </h3>
-                  <p className="text-neutral-300 leading-relaxed">
-                    {value.description}
-                  </p>
+            {values.map((value, index) => {
+              const ValueIcon = value.icon;
+              return (
+                <div key={index} className={`group transition-all duration-700 delay-${index * 200} ${isVisible.values ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+                  <div className="bg-neutral-900 p-8 rounded-lg border border-neutral-800 hover:border-violet-500 transition-all duration-300 hover:scale-105 h-full">
+                    <ValueIcon className="w-12 h-12 text-violet-400 mb-6 group-hover:scale-110 transition-transform" />
+                    <h3 className="text-2xl font-bold mb-4 group-hover:text-violet-400 transition-colors">
+                      {value.title}
+                    </h3>
+                    <p className="text-neutral-300 leading-relaxed">
+                      {value.description}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -235,7 +243,7 @@ const Story = () => {
             <span className="text-red-400">hate boring shit</span>.
           </h2>
           
-          <div className="text-xl text-neutral-300 leading-relaxed space-y-6 mb-12">
+          <div className="flex flex-col gap-6 text-xl text-neutral-300 leading-relaxed mb-12">
             <p>
               We're not just another AI company. We're rebels against the status quo. 
               Enemies of inefficiency. Champions of human potential.

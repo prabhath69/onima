@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { Linkedin, Twitter, Mail } from 'lucide-react';
 
 const Footer = () => {
@@ -21,16 +21,16 @@ const Footer = () => {
           <div>
             <h4 className="text-white font-semibold mb-4">Quick Links</h4>
             <div className="space-y-2">
-              <Link to="/work" className="block text-neutral-400 hover:text-violet-400 transition-colors text-sm">
+              <Link href="/work" className="block text-neutral-400 hover:text-violet-400 transition-colors text-sm">
                 Our Work
               </Link>
-              <Link to="/story" className="block text-neutral-400 hover:text-violet-400 transition-colors text-sm">
+              <Link href="/story" className="block text-neutral-400 hover:text-violet-400 transition-colors text-sm">
                 Our Story
               </Link>
-              <Link to="/services" className="block text-neutral-400 hover:text-violet-400 transition-colors text-sm">
+              <Link href="/services" className="block text-neutral-400 hover:text-violet-400 transition-colors text-sm">
                 Services
               </Link>
-              <Link to="/contact" className="block text-neutral-400 hover:text-violet-400 transition-colors text-sm">
+              <Link href="/contact" className="block text-neutral-400 hover:text-violet-400 transition-colors text-sm">
                 Contact
               </Link>
             </div>

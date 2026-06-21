@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { ArrowRight, MessageCircle, Phone, Zap, ChevronRight } from 'lucide-react';
 
 const Home = () => {
@@ -19,7 +21,15 @@ const Home = () => {
         clearInterval(timer);
       }
     }, 80);
-    return () => clearInterval(timer);
+
+    // Enable scroll snapping only on home page
+    document.documentElement.classList.add('scroll-snap-active');
+
+    return () => {
+      clearInterval(timer);
+      // Disable scroll snapping when leaving home page
+      document.documentElement.classList.remove('scroll-snap-active');
+    };
   }, []);
 
   return (
@@ -55,14 +65,14 @@ const Home = () => {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link 
-              to="/work"
+              href="/work"
               className="group bg-gradient-to-r from-violet-600 to-red-600 hover:from-violet-500 hover:to-red-500 px-8 py-4 rounded-lg text-lg font-bold transition-all duration-300 hover:scale-105 flex items-center justify-center"
             >
               See Our Work
               <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link 
-              to="/services"
+              href="/services"
               className="group border border-violet-500 hover:bg-violet-500/10 px-8 py-4 rounded-lg text-lg font-bold transition-all duration-300 hover:scale-105 flex items-center justify-center"
             >
               Explore Services
@@ -122,7 +132,7 @@ const Home = () => {
 
           <div className="text-center">
             <Link 
-              to="/services"
+              href="/services"
               className="inline-flex items-center text-violet-400 hover:text-violet-300 font-semibold transition-colors"
             >
               View All Services
@@ -182,7 +192,7 @@ const Home = () => {
 
           <div className="text-center">
             <Link 
-              to="/work"
+              href="/work"
               className="inline-flex items-center text-violet-400 hover:text-violet-300 font-semibold transition-colors"
             >
               View All Case Studies
@@ -200,7 +210,7 @@ const Home = () => {
           </h2>
           
           <Link 
-            to="/contact"
+            href="/contact"
             className="group bg-gradient-to-r from-violet-600 to-red-600 hover:from-violet-500 hover:to-red-500 px-12 py-4 rounded-lg text-xl font-bold transition-all duration-300 hover:scale-105 inline-flex items-center"
           >
             Let's Break It

@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { 
   MessageCircle, 
   Phone, 
@@ -143,9 +145,11 @@ const Services = () => {
       }
     }
   ];
-const ActiveIcon = services[activeService].icon;
+
+  const ActiveIcon = services[activeService].icon;
+
   return (
-    <div className="min-h-screen pt-20">
+    <div className="min-h-screen pt-28">
       {/* Hero */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-6">
@@ -165,23 +169,26 @@ const ActiveIcon = services[activeService].icon;
       <section className="py-12 border-b border-neutral-800">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-wrap justify-center gap-4">
-            {services.map((service, index) => (
-              <button
-                key={index}
-                onClick={() => setActiveService(index)}
-                className={`flex items-center px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${
-                  activeService === index
-                    ? 'bg-gradient-to-r from-violet-600 to-red-600 text-white'
-                    : 'bg-neutral-800 text-neutral-300 hover:bg-neutral-700'
-                }`}
-              >
-                <service.icon className="w-5 h-5 mr-2" />
-                {service.title}
-                {index === 0 && (
-                  <span className="ml-2 px-2 py-1 bg-red-500 text-xs rounded-full">FLAGSHIP</span>
-                )}
-              </button>
-            ))}
+            {services.map((service, index) => {
+              const ServiceIcon = service.icon;
+              return (
+                <button
+                  key={index}
+                  onClick={() => setActiveService(index)}
+                  className={`flex items-center px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${
+                    activeService === index
+                      ? 'bg-gradient-to-r from-violet-600 to-red-600 text-white'
+                      : 'bg-neutral-800 text-neutral-300 hover:bg-neutral-700'
+                  }`}
+                >
+                  <ServiceIcon className="w-5 h-5 mr-2" />
+                  {service.title}
+                  {index === 0 && (
+                    <span className="ml-2 px-2 py-1 bg-red-500 text-xs rounded-full">FLAGSHIP</span>
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -209,7 +216,7 @@ const ActiveIcon = services[activeService].icon;
               {/* Features */}
               <div className="mb-8">
                 <h3 className="text-2xl font-bold mb-4">What's Included</h3>
-                <div className="space-y-3">
+                <div className="flex flex-col gap-3">
                   {services[activeService].features.map((feature, index) => (
                     <div key={index} className="flex items-center">
                       <CheckCircle className="w-5 h-5 text-green-400 mr-3 flex-shrink-0" />
@@ -231,11 +238,11 @@ const ActiveIcon = services[activeService].icon;
             </div>
 
             {/* Scenario & ROI */}
-            <div className="space-y-8">
+            <div className="flex flex-col gap-8">
               <div className="bg-gradient-to-br from-violet-900/20 to-red-900/20 p-8 rounded-lg border border-violet-500/30">
                 <h3 className="text-2xl font-bold mb-6 text-violet-400">Real-World Scenario</h3>
                 
-                <div className="space-y-6">
+                <div className="flex flex-col gap-6">
                   <div>
                     <h4 className="font-semibold text-red-400 mb-2">The Challenge</h4>
                     <p className="text-neutral-300">{services[activeService].scenario.problem}</p>
@@ -257,7 +264,7 @@ const ActiveIcon = services[activeService].icon;
               <div className="bg-neutral-900 p-8 rounded-lg border border-neutral-800">
                 <h3 className="text-xl font-bold mb-6">Impact Visualization</h3>
                 
-                <div className="space-y-4">
+                <div className="flex flex-col gap-4">
                   <div>
                     <div className="flex justify-between mb-2">
                       <span className="text-sm">Efficiency Gain</span>
@@ -329,17 +336,20 @@ const ActiveIcon = services[activeService].icon;
                 title: "ROI Guarantee",
                 description: "If our solution doesn't pay for itself within 90 days, we'll refund your investment. That's how confident we are."
               }
-            ].map((benefit, index) => (
-              <div key={index} className="group bg-neutral-900 p-8 rounded-lg border border-neutral-800 hover:border-violet-500 transition-all duration-300 hover:scale-105">
-                <benefit.icon className="w-12 h-12 text-violet-400 mb-6 group-hover:scale-110 transition-transform" />
-                <h3 className="text-2xl font-bold mb-4 group-hover:text-violet-400 transition-colors">
-                  {benefit.title}
-                </h3>
-                <p className="text-neutral-300 leading-relaxed">
-                  {benefit.description}
-                </p>
-              </div>
-            ))}
+            ].map((benefit, index) => {
+              const BenefitIcon = benefit.icon;
+              return (
+                <div key={index} className="group bg-neutral-900 p-8 rounded-lg border border-neutral-800 hover:border-violet-500 transition-all duration-300 hover:scale-105">
+                  <BenefitIcon className="w-12 h-12 text-violet-400 mb-6 group-hover:scale-110 transition-transform" />
+                  <h3 className="text-2xl font-bold mb-4 group-hover:text-violet-400 transition-colors">
+                    {benefit.title}
+                  </h3>
+                  <p className="text-neutral-300 leading-relaxed">
+                    {benefit.description}
+                  </p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -356,7 +366,7 @@ const ActiveIcon = services[activeService].icon;
           </p>
           
           <Link 
-            to="/contact"
+            href="/contact"
             className="group bg-gradient-to-r from-violet-600 to-red-600 hover:from-violet-500 hover:to-red-500 px-12 py-4 rounded-lg text-xl font-bold transition-all duration-300 hover:scale-105 inline-flex items-center"
           >
             Talk to Us

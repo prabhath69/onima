@@ -1,4 +1,7 @@
+"use client";
+
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { ArrowRight, TrendingUp, Users, Clock, DollarSign } from 'lucide-react';
 
 const Work = () => {
@@ -84,7 +87,7 @@ const Work = () => {
   ];
 
   return (
-    <div className="min-h-screen pt-20">
+    <div className="min-h-screen pt-28">
       {/* Hero */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-6">
@@ -133,7 +136,7 @@ const Work = () => {
                 {caseStudies[activeCase].title}
               </h2>
               
-              <div className="space-y-6 mb-8">
+              <div className="flex flex-col gap-6 mb-8">
                 <div>
                   <h3 className="text-xl font-semibold text-red-400 mb-2">The Challenge</h3>
                   <p className="text-neutral-300 leading-relaxed">{caseStudies[activeCase].challenge}</p>
@@ -167,35 +170,38 @@ const Work = () => {
             </div>
 
             {/* Metrics Visualization */}
-            <div className="space-y-6">
+            <div className="flex flex-col gap-6">
               <h3 className="text-2xl font-bold mb-6">Before vs After</h3>
-              {caseStudies[activeCase].metrics.map((metric, index) => (
-                <div key={index} className="bg-neutral-900 p-6 rounded-lg border border-neutral-800">
-                  <div className="flex justify-between items-center mb-4">
-                    <h4 className="font-semibold">{metric.label}</h4>
-                    <div className="text-green-400 font-bold">+{metric.improvement}</div>
-                  </div>
-                  
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-red-300 text-sm">Before:</span>
-                      <span className="text-red-300">{metric.before}</span>
+              {caseStudies[activeCase].metrics.map((metric, index) => {
+                const improvementVal = parseFloat(metric.improvement) || 0;
+                return (
+                  <div key={index} className="bg-neutral-900 p-6 rounded-lg border border-neutral-800">
+                    <div className="flex justify-between items-center mb-4">
+                      <h4 className="font-semibold">{metric.label}</h4>
+                      <div className="text-green-400 font-bold">+{metric.improvement}</div>
                     </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-green-400 text-sm">After:</span>
-                      <span className="text-green-400 font-semibold">{metric.after}</span>
+                    
+                    <div className="flex flex-col gap-3">
+                      <div className="flex justify-between items-center">
+                        <span className="text-red-300 text-sm">Before:</span>
+                        <span className="text-red-300">{metric.before}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-green-400 text-sm">After:</span>
+                        <span className="text-green-400 font-semibold">{metric.after}</span>
+                      </div>
+                    </div>
+                    
+                    {/* Progress Bar */}
+                    <div className="mt-4 bg-neutral-800 rounded-full h-2 overflow-hidden">
+                      <div 
+                        className="h-full bg-gradient-to-r from-violet-500 to-green-400 transition-all duration-1000"
+                        style={{ width: `${Math.min(improvementVal, 100)}%` }}
+                      ></div>
                     </div>
                   </div>
-                  
-                  {/* Progress Bar */}
-                  <div className="mt-4 bg-neutral-800 rounded-full h-2 overflow-hidden">
-                    <div 
-                      className="h-full bg-gradient-to-r from-violet-500 to-green-400 transition-all duration-1000"
-                      style={{ width: `${Math.min(parseInt(metric.improvement), 100)}%` }}
-                    ></div>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
@@ -235,18 +241,18 @@ const Work = () => {
       {/* CTA */}
       <section className="py-20">
         <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-4xl md:text-6xl font-bold mb-8" style={{ fontFamily: 'Playfair Display, serif' }}>
+          <h2 className="text-4xl md:text-6xl font-bold mb-8 leading-tight" style={{ fontFamily: 'Playfair Display, serif' }}>
             Ready to join the <span className="text-red-400">revolution</span>?
           </h2>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a 
+            <Link 
               href="/contact"
               className="group bg-gradient-to-r from-violet-600 to-red-600 hover:from-violet-500 hover:to-red-500 px-12 py-4 rounded-lg text-xl font-bold transition-all duration-300 hover:scale-105 inline-flex items-center justify-center"
             >
               Start Your Transformation
               <ArrowRight className="w-6 h-6 ml-2 group-hover:translate-x-1 transition-transform" />
-            </a>
+            </Link>
           </div>
           
           <p className="text-neutral-400 mt-4 text-sm">No forms. No demos. Just results.</p>

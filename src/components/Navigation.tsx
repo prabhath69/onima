@@ -1,11 +1,14 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const location = useLocation();
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -29,22 +32,22 @@ const Navigation = () => {
       isScrolled ? 'bg-neutral-950/95 backdrop-blur-md border-b border-neutral-800' : 'bg-transparent'
     }`}>
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-        <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-violet-400 to-red-400 bg-clip-text text-transparent hover:scale-105 transition-transform">
+        <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-violet-400 to-red-400 bg-clip-text text-transparent hover:scale-105 transition-transform">
           ONIMA
         </Link>
         
         {/* Desktop Navigation */}
-        <div className="hidden md:flex space-x-8 text-sm">
+        <div className="hidden md:flex gap-8 text-sm">
           {navItems.map((item) => (
             <Link
               key={item.path}
-              to={item.path}
+              href={item.path}
               className={`relative hover:text-violet-400 transition-colors ${
-                location.pathname === item.path ? 'text-violet-400' : ''
+                pathname === item.path ? 'text-violet-400' : ''
               }`}
             >
               {item.label}
-              {location.pathname === item.path && (
+              {pathname === item.path && (
                 <div className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-violet-400 to-red-400"></div>
               )}
             </Link>
@@ -67,9 +70,9 @@ const Navigation = () => {
             {navItems.map((item) => (
               <Link
                 key={item.path}
-                to={item.path}
+                href={item.path}
                 className={`block hover:text-violet-400 transition-colors ${
-                  location.pathname === item.path ? 'text-violet-400' : ''
+                  pathname === item.path ? 'text-violet-400' : ''
                 }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
