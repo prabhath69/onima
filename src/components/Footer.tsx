@@ -5,10 +5,17 @@ import Link from 'next/link';
 import { Mail } from 'lucide-react';
 import { FaLinkedin as Linkedin, FaTwitter as Twitter } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import { usePathname } from 'next/navigation';
 
 const fadeUp = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } };
 
 const Footer = () => {
+  const pathname = usePathname();
+  
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
+
   return (
     <motion.footer
       initial="hidden"

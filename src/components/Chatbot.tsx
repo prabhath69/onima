@@ -1,10 +1,14 @@
 "use client";
 
 import React, { useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import '@n8n/chat/style.css';
 
 export default function Chatbot() {
+  const pathname = usePathname();
+
   useEffect(() => {
+    if (pathname?.startsWith('/admin')) return;
     const initChat = async () => {
       try {
         const webhookUrl = process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL || 'http://localhost:5678/webhook/22f03920-3d1b-40ab-9259-38293f22aa97/chat';
@@ -57,7 +61,11 @@ export default function Chatbot() {
       }
     };
     initChat();
-  }, []);
+  }, [pathname]);
+
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
 
   return <div id="n8n-chat" />;
 }
