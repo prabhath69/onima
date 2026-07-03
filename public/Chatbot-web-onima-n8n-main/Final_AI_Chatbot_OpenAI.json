@@ -1,0 +1,373 @@
+{
+  "name": "AI Chatbot",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "mode": "webhook",
+        "options": {
+          "allowedOrigins": "*",
+          "responseMode": "lastNode"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "03aa1bd5-0535-4c26-a709-ceb1212f75de",
+      "name": "When chat message received",
+      "webhookId": "ce1fb85a-0642-4741-acb7-e158be6d3520"
+    },
+    {
+      "parameters": {
+        "modelName": "embed-english-light-v3.0"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsCohere",
+      "typeVersion": 1,
+      "position": [
+        380,
+        560
+      ],
+      "id": "d89974c1-cb7f-4728-b650-e52395290cb2",
+      "name": "Embeddings Cohere",
+      "credentials": {
+        "cohereApi": {
+          "id": "yP4tUKjJcS1toUFm",
+          "name": "CohereApi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1.1,
+      "position": [
+        520,
+        180
+      ],
+      "id": "89b0e79f-8b06-407a-84d3-5a851e55bc20",
+      "name": "Answer questions with a vector store"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmCohere",
+      "typeVersion": 1,
+      "position": [
+        760,
+        360
+      ],
+      "id": "b3d1a9a7-4a5d-419b-860a-6c7813c62073",
+      "name": "Cohere Model",
+      "credentials": {
+        "cohereApi": {
+          "id": "yP4tUKjJcS1toUFm",
+          "name": "CohereApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a helpful AI assistant for Onima which is a AI automation agency. Your job is to answer to the questions asked by user from the Vector Store provided and do not answer to any question out of context and also do not frame new answers to the questions you dont know and if you are asked about the contact information, ask them if they need email or instagram and provide them the contact details based on last section of the vector base."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        220,
+        0
+      ],
+      "id": "3e21e9b9-97c3-4ba7-a3fd-178e426bcc4c",
+      "name": "AI Agent",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.1,
+      "position": [
+        420,
+        380
+      ],
+      "id": "a59fdbcf-55f8-40d4-ba9c-ee59fcb196e6",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "vG5UmRJ3TZM2jNa7",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-nano-2025-04-14",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-nano-2025-04-14"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        100,
+        240
+      ],
+      "id": "bfd74109-75dc-4ab3-9c9c-b811cfae93f9",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "M2h3TIkneb9c95DF",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        300,
+        240
+      ],
+      "id": "ef0211b0-725e-4f2f-985f-99df2cd3409a",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "chunkSize": 500,
+        "chunkOverlap": 100,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        1180,
+        380
+      ],
+      "id": "8eb87f8f-ca26-4e84-ab2c-59651dc2b49d",
+      "name": "Recursive Character Text Splitter"
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "Onima is a AI Automation Agency which help specific businesses like laundry services across the globe automate their hectic workflow.\n\nServices we offer:\n\n1) CRM automation\n2) Personalised Email Automation\n3) Lead Generation\n4) Lead Outbound Automation\n5) Custom AI Chatbots for your website\n6) Custom Workflow Automation as per your needs!!!\n\nPricing:\nDepends on the service you opt for.\n1) CRM automation - $500\n2) Personalised Email Automation - $100\n3) Lead Generation - $1000\n4) Lead Outbound Automation - $300\n5) Custom AI Chatbots for your website - $1000\n6) Custom Workflow Automation as per your needs - $$$Depends on your needs\n\nWhen we are open: Everyday non-stop because we are an automation agency\n\nApproximate time to complete one client need: 1 or 2 weeks (Yes it is fast because we automate most of the stuff)\n\nHow you can contact us:\n1) Email: onima.services@gmail.com\n2) Instagram: @onima.services\n3) Contact form on the website itself",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        200
+      ],
+      "id": "332d529b-0470-4ded-81b7-d383d1a5bff3",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "modelName": "embed-english-light-v3.0"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsCohere",
+      "typeVersion": 1,
+      "position": [
+        1060,
+        200
+      ],
+      "id": "b1f78db6-3ae8-4c06-900e-1a7eec85ad1e",
+      "name": "Embeddings Cohere1",
+      "credentials": {
+        "cohereApi": {
+          "id": "yP4tUKjJcS1toUFm",
+          "name": "CohereApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "embeddingBatchSize": 300,
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.1,
+      "position": [
+        1120,
+        0
+      ],
+      "id": "82827fba-5768-433b-84af-7efbac24e2f5",
+      "name": "Supabase Vector Store1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "vG5UmRJ3TZM2jNa7",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        940,
+        0
+      ],
+      "id": "80bb1832-bfac-4a9e-ac80-0b6f6943ced7",
+      "name": "When clicking ‘Test workflow’"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Cohere": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer questions with a vector store": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cohere Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Answer questions with a vector store",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Answer questions with a vector store",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Cohere1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "72ea3c73-769b-4e2f-8441-47791b447214",
+  "meta": {
+    "instanceId": "bb15867eb79ce1e55fdb60d950a74a97a22f15103b52b2440a52acbf0f1c0735"
+  },
+  "id": "pXOGH0yz1qUW6KaO",
+  "tags": []
+}

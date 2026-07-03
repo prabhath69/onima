@@ -1,15 +1,19 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const location = useLocation();
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      setIsScrolled(window.scrollY > 30);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -25,27 +29,45 @@ const Navigation = () => {
   ];
 
   return (
-    <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-      isScrolled ? 'bg-neutral-950/95 backdrop-blur-md border-b border-neutral-800' : 'bg-transparent'
-    }`}>
-      <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-        <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-violet-400 to-red-400 bg-clip-text text-transparent hover:scale-105 transition-transform">
+    <nav className="fixed top-5 left-0 right-0 z-50 flex justify-center px-4 md:px-6">
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        className={`w-full max-w-5xl px-6 py-3 rounded-full flex justify-between items-center transition-all duration-500 ${
+          isScrolled 
+            ? 'nav-glass-scrolled py-2.5' 
+            : 'nav-glass'
+        }`}
+        style={{
+          backdropFilter: isScrolled ? 'blur(56px) saturate(170%)' : 'blur(48px) saturate(150%)',
+          WebkitBackdropFilter: isScrolled ? 'blur(56px) saturate(170%)' : 'blur(48px) saturate(150%)'
+        }}
+      >
+        <Link href="/" className="text-xl font-bold bg-gradient-to-r from-indigo-400 via-violet-400 to-cyan-400 bg-clip-text text-transparent hover:opacity-85 transition-opacity tracking-wider">
           ONIMA
         </Link>
         
         {/* Desktop Navigation */}
-        <div className="hidden md:flex space-x-8 text-sm">
+        <div className="hidden md:flex items-center gap-2">
           {navItems.map((item) => (
             <Link
               key={item.path}
-              to={item.path}
-              className={`relative hover:text-violet-400 transition-colors ${
-                location.pathname === item.path ? 'text-violet-400' : ''
+              href={item.path}
+              className={`relative px-4 py-1.5 text-sm font-medium transition-all duration-300 rounded-full ${
+                pathname === item.path 
+                  ? 'text-zinc-50 bg-white/[0.07] shadow-inner shadow-white/[0.02]' 
+                  : 'text-zinc-400 hover:text-zinc-200'
               }`}
             >
               {item.label}
-              {location.pathname === item.path && (
-                <div className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-violet-400 to-red-400"></div>
+              {pathname === item.path && (
+                <motion.div
+                  layoutId="nav-indicator"
+                  className="absolute inset-0 rounded-full bg-white/[0.07]"
+                  style={{ zIndex: -1 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                />
               )}
             </Link>
           ))}
@@ -53,32 +75,48 @@ const Navigation = () => {
 
         {/* Mobile Menu Button */}
         <button
-          className="md:hidden"
+          className="md:hidden text-zinc-300 hover:text-zinc-50 transition-colors p-1"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
-          {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
-      </div>
+      </motion.div>
 
       {/* Mobile Menu */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden bg-neutral-950/95 backdrop-blur-md border-b border-neutral-800">
-          <div className="px-6 py-4 space-y-4">
-            {navItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`block hover:text-violet-400 transition-colors ${
-                  location.pathname === item.path ? 'text-violet-400' : ''
-                }`}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.97 }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="absolute top-16 left-4 right-4 md:hidden glass-card p-5 rounded-2xl shadow-2xl z-40"
+          >
+            <div className="flex flex-col gap-2">
+              {navItems.map((item, i) => (
+                <motion.div
+                  key={item.path}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.05, duration: 0.3 }}
+                >
+                  <Link
+                    href={item.path}
+                    className={`block px-4 py-2.5 rounded-xl text-base font-medium transition-all ${
+                      pathname === item.path 
+                        ? 'text-zinc-50 bg-white/[0.07]' 
+                        : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.02]'
+                    }`}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {item.label}
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 };
