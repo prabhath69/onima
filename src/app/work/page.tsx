@@ -5,10 +5,11 @@ import Link from 'next/link';
 import Image from 'next/image';
 import {
   ArrowRight, Phone, MessageCircle, Zap, Bot, Mic, Brain,
-  Globe, Instagram, Facebook, MessageSquare, Mail, Linkedin,
+  Globe, MessageSquare, Mail,
   ChevronRight, Layers, Server, Volume2, Play, Pause,
   ShieldCheck, Clock, TrendingUp, Users, Sparkles, Eye
 } from 'lucide-react';
+import { FaInstagram as Instagram, FaFacebook as Facebook, FaLinkedin as Linkedin } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const fadeUp = { hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0 } };

@@ -2,7 +2,8 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Linkedin, Twitter, Mail } from 'lucide-react';
+import { Mail } from 'lucide-react';
+import { FaLinkedin as Linkedin, FaTwitter as Twitter } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 
 const fadeUp = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } };
