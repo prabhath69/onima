@@ -1,22 +1,7 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
 import { verifyAdmin } from '@/lib/auth';
-
-const dataFilePath = path.join(process.cwd(), 'src/data/leads.json');
-
-async function readLeads() {
-  try {
-    const data = await fs.readFile(dataFilePath, 'utf-8');
-    return JSON.parse(data);
-  } catch (error) {
-    return [];
-  }
-}
-
-async function writeLeads(leads: any[]) {
-  await fs.writeFile(dataFilePath, JSON.stringify(leads, null, 2), 'utf-8');
-}
+import connectToDatabase from '@/lib/db';
+import Lead from '@/models/Lead';
 
 export async function GET() {
   const isAdmin = await verifyAdmin();
@@ -24,8 +9,14 @@ export async function GET() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const leads = await readLeads();
-  return NextResponse.json(leads);
+  try {
+    await connectToDatabase();
+    const leads = await Lead.find({}).sort({ createdAt: -1 });
+    return NextResponse.json(leads);
+  } catch (error) {
+    console.error('Error fetching leads:', error);
+    return NextResponse.json({ error: 'Failed to fetch leads' }, { status: 500 });
+  }
 }
 
 export async function POST(request: Request) {
@@ -35,19 +26,15 @@ export async function POST(request: Request) {
   }
 
   try {
-    const lead = await request.json();
-    const leads = await readLeads();
+    await connectToDatabase();
+    const leadData = await request.json();
     
-    const newLead = {
-      ...lead,
-      id: Math.random().toString(36).substring(2, 9) + Date.now().toString(36),
-    };
-    
-    leads.push(newLead);
-    await writeLeads(leads);
+    // We don't need to manually generate an ID, MongoDB will create an _id automatically.
+    const newLead = await Lead.create(leadData);
     
     return NextResponse.json(newLead);
   } catch (error) {
+    console.error('Error creating lead:', error);
     return NextResponse.json({ error: 'Failed to create lead' }, { status: 500 });
   }
 }

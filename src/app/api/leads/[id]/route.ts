@@ -1,22 +1,7 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
 import { verifyAdmin } from '@/lib/auth';
-
-const dataFilePath = path.join(process.cwd(), 'src/data/leads.json');
-
-async function readLeads() {
-  try {
-    const data = await fs.readFile(dataFilePath, 'utf-8');
-    return JSON.parse(data);
-  } catch (error) {
-    return [];
-  }
-}
-
-async function writeLeads(leads: any[]) {
-  await fs.writeFile(dataFilePath, JSON.stringify(leads, null, 2), 'utf-8');
-}
+import connectToDatabase from '@/lib/db';
+import Lead from '@/models/Lead';
 
 export async function PUT(
   request: Request,
@@ -30,22 +15,22 @@ export async function PUT(
   try {
     const { id } = await params;
     const updatedLeadData = await request.json();
-    const leads = await readLeads();
     
-    const leadIndex = leads.findIndex((l: any) => l.id === id);
-    if (leadIndex === -1) {
+    await connectToDatabase();
+    
+    const updatedLead = await Lead.findByIdAndUpdate(
+      id,
+      { $set: updatedLeadData },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedLead) {
       return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
     }
     
-    leads[leadIndex] = {
-      ...leads[leadIndex],
-      ...updatedLeadData,
-      id
-    };
-    
-    await writeLeads(leads);
-    return NextResponse.json(leads[leadIndex]);
+    return NextResponse.json(updatedLead);
   } catch (error) {
+    console.error('Error updating lead:', error);
     return NextResponse.json({ error: 'Failed to update lead' }, { status: 500 });
   }
 }
@@ -61,18 +46,18 @@ export async function DELETE(
 
   try {
     const { id } = await params;
-    const leads = await readLeads();
     
-    const leadIndex = leads.findIndex((l: any) => l.id === id);
-    if (leadIndex === -1) {
+    await connectToDatabase();
+    
+    const deletedLead = await Lead.findByIdAndDelete(id);
+
+    if (!deletedLead) {
       return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
     }
     
-    leads.splice(leadIndex, 1);
-    await writeLeads(leads);
-    
     return NextResponse.json({ success: true, message: 'Lead deleted successfully' });
   } catch (error) {
+    console.error('Error deleting lead:', error);
     return NextResponse.json({ error: 'Failed to delete lead' }, { status: 500 });
   }
 }

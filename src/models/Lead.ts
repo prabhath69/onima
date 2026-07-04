@@ -1,0 +1,52 @@
+import mongoose from 'mongoose';
+
+export interface ILead extends mongoose.Document {
+  name: string;
+  description?: string;
+  instagram?: string;
+  website?: string;
+  email?: string;
+  contactName?: string;
+  phone?: string;
+  service?: string;
+  status: string;
+  reasonForFailure?: string;
+  socials?: string;
+  priority: 'Low' | 'Medium' | 'High';
+  value: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const LeadSchema = new mongoose.Schema<ILead>(
+  {
+    name: { type: String, required: true },
+    description: { type: String, default: '' },
+    instagram: { type: String, default: '' },
+    website: { type: String, default: '' },
+    email: { type: String, default: '' },
+    contactName: { type: String, default: '' },
+    phone: { type: String, default: '' },
+    service: { type: String, default: '' },
+    status: { type: String, default: 'Need to Outreach' },
+    reasonForFailure: { type: String, default: '' },
+    socials: { type: String, default: '' },
+    priority: { type: String, enum: ['Low', 'Medium', 'High'], default: 'Medium' },
+    value: { type: Number, default: 0 },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+// This ensures that when the object is converted to JSON, _id becomes id
+LeadSchema.set('toJSON', {
+  virtuals: true,
+  versionKey: false,
+  transform: function (doc: any, ret: any) {
+    ret.id = ret._id.toString();
+    delete ret._id;
+  },
+});
+
+export default mongoose.models.Lead || mongoose.model<ILead>('Lead', LeadSchema);
