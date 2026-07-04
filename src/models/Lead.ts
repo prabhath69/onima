@@ -14,6 +14,7 @@ export interface ILead extends mongoose.Document {
   socials?: string;
   priority: 'Low' | 'Medium' | 'High';
   value: number;
+  addedBy?: 'Pavan' | 'Prabhath' | 'Nitish' | '';
   createdAt: Date;
   updatedAt: Date;
 }
@@ -33,6 +34,7 @@ const LeadSchema = new mongoose.Schema<ILead>(
     socials: { type: String, default: '' },
     priority: { type: String, enum: ['Low', 'Medium', 'High'], default: 'Medium' },
     value: { type: Number, default: 0 },
+    addedBy: { type: String, enum: ['Pavan', 'Prabhath', 'Nitish', ''], default: '' },
   },
   {
     timestamps: true,

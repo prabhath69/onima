@@ -12,13 +12,11 @@ import {
   Phone, 
   LogOut, 
   AlertCircle, 
-  TrendingUp, 
   Filter, 
   X,
   FileSpreadsheet,
   MoreVertical,
   Edit,
-  ExternalLink,
   DollarSign,
   Flame,
   Zap,
@@ -26,9 +24,7 @@ import {
   ArrowUpDown,
   Copy,
   Check,
-  Calendar,
   Layers,
-  ChevronRight
 } from 'lucide-react';
 import { FaInstagram as Instagram } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -48,6 +44,7 @@ interface Lead {
   socials: string;
   priority: 'Low' | 'Medium' | 'High';
   value: number;
+  addedBy?: 'Pavan' | 'Prabhath' | 'Nitish' | '';
   createdAt?: string;
   updatedAt?: string;
 }
@@ -74,6 +71,12 @@ const PRIORITIES = [
   'Low'
 ] as const;
 
+const TEAM_MEMBERS = [
+  'Pavan',
+  'Prabhath',
+  'Nitish'
+] as const;
+
 export default function AdminDashboard() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
@@ -83,6 +86,7 @@ export default function AdminDashboard() {
   const [statusFilter, setStatusFilter] = useState<string>('All');
   const [serviceFilter, setServiceFilter] = useState<string>('All');
   const [priorityFilter, setPriorityFilter] = useState<string>('All');
+  const [addedByFilter, setAddedByFilter] = useState<string>('All');
   
   // Sorting State
   const [sortField, setSortField] = useState<keyof Lead>('createdAt');
@@ -112,7 +116,8 @@ export default function AdminDashboard() {
     reasonForFailure: '',
     socials: '',
     priority: 'Medium',
-    value: 0
+    value: 0,
+    addedBy: ''
   });
 
   const router = useRouter();
@@ -178,7 +183,8 @@ export default function AdminDashboard() {
           reasonForFailure: '',
           socials: '',
           priority: 'Medium',
-          value: 0
+          value: 0,
+          addedBy: ''
         });
       } else {
         alert('Failed to add lead');
@@ -269,7 +275,8 @@ export default function AdminDashboard() {
       'Priority',
       'Estimated Value ($)',
       'Reason for failure',
-      'Socials/Notes'
+      'Socials/Notes',
+      'Added By'
     ];
 
     const rows = leads.map(lead => [
@@ -285,7 +292,8 @@ export default function AdminDashboard() {
       lead.priority,
       lead.value,
       lead.reasonForFailure,
-      lead.socials
+      lead.socials,
+      lead.addedBy || ''
     ]);
 
     const csvContent = 
@@ -350,8 +358,9 @@ export default function AdminDashboard() {
       const matchesStatus = statusFilter === 'All' || lead.status === statusFilter;
       const matchesService = serviceFilter === 'All' || lead.service === serviceFilter;
       const matchesPriority = priorityFilter === 'All' || lead.priority === priorityFilter;
+      const matchesAddedBy = addedByFilter === 'All' || lead.addedBy === addedByFilter;
       
-      return matchesSearch && matchesStatus && matchesService && matchesPriority;
+      return matchesSearch && matchesStatus && matchesService && matchesPriority && matchesAddedBy;
     })
     .sort((a, b) => {
       let aVal = a[sortField] || '';
@@ -402,6 +411,19 @@ export default function AdminDashboard() {
         return 'bg-pink-500/10 text-pink-400 border-pink-500/20';
       case 'social media':
         return 'bg-teal-500/10 text-teal-400 border-teal-500/20';
+      default:
+        return 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20';
+    }
+  };
+
+  const getAddedByStyle = (addedBy?: string) => {
+    switch (addedBy) {
+      case 'Pavan':
+        return 'bg-orange-500/10 text-orange-400 border-orange-500/20';
+      case 'Prabhath':
+        return 'bg-fuchsia-500/10 text-fuchsia-400 border-fuchsia-500/20';
+      case 'Nitish':
+        return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
       default:
         return 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20';
     }
@@ -598,6 +620,16 @@ export default function AdminDashboard() {
               <option value="All">All Priorities</option>
               {PRIORITIES.map(p => <option key={p} value={p}>{p} Priority</option>)}
             </select>
+
+            {/* Added By Selector */}
+            <select
+              value={addedByFilter}
+              onChange={(e) => setAddedByFilter(e.target.value)}
+              className="px-3 py-1.5 rounded-lg bg-zinc-950/60 border border-white/[0.05] text-xs text-zinc-300 focus:outline-none cursor-pointer hover:bg-zinc-900"
+            >
+              <option value="All">All Owners</option>
+              {TEAM_MEMBERS.map(m => <option key={m} value={m}>{m}</option>)}
+            </select>
           </div>
         </div>
       </div>
@@ -637,6 +669,15 @@ export default function AdminDashboard() {
                   >
                     <div className="flex items-center space-x-1.5">
                       <span>Service</span>
+                      <ArrowUpDown className="w-3.5 h-3.5 text-zinc-500" />
+                    </div>
+                  </th>
+                  <th 
+                    onClick={() => handleSort('addedBy')} 
+                    className="py-4.5 px-6 w-[120px] cursor-pointer hover:text-white transition-colors select-none"
+                  >
+                    <div className="flex items-center space-x-1.5">
+                      <span>Added By</span>
                       <ArrowUpDown className="w-3.5 h-3.5 text-zinc-500" />
                     </div>
                   </th>
@@ -728,6 +769,13 @@ export default function AdminDashboard() {
                         <td className="py-4.5 px-6">
                           <span className={`inline-block py-1 px-2.5 rounded-full text-xs font-semibold border ${getServiceStyle(lead.service)}`}>
                             {lead.service || 'Other'}
+                          </span>
+                        </td>
+
+                        {/* Added By */}
+                        <td className="py-4.5 px-6">
+                          <span className={`inline-block py-1 px-2.5 rounded-full text-xs font-semibold border ${getAddedByStyle(lead.addedBy)}`}>
+                            {lead.addedBy || 'N/A'}
                           </span>
                         </td>
 
@@ -920,19 +968,28 @@ export default function AdminDashboard() {
                   {/* Body Content */}
                   <div className="flex-1 overflow-y-auto px-6 py-6 space-y-8">
                     
-                    {/* Deal Value & Priority Row */}
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="glass-panel p-4 rounded-xl flex flex-col justify-center">
+                    {/* Deal Value, Priority & Added By Row */}
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="glass-panel p-3.5 rounded-xl flex flex-col justify-center">
                         <div className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">Deal Value</div>
-                        <div className="text-xl font-extrabold text-cyan-400 font-outfit mt-1 flex items-center">
-                          <DollarSign className="w-4 h-4 text-cyan-400 -ml-0.5" />
+                        <div className="text-lg font-extrabold text-cyan-400 font-outfit mt-1 flex items-center">
+                          <DollarSign className="w-3.5 h-3.5 text-cyan-400 -ml-0.5" />
                           <span>{(selectedLead.value || 0).toLocaleString()}</span>
                         </div>
                       </div>
 
-                      <div className="glass-panel p-4 rounded-xl flex flex-col justify-center">
+                      <div className="glass-panel p-3.5 rounded-xl flex flex-col justify-center">
                         <div className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">Priority</div>
-                        <div className="mt-1.5">{getPriorityBadge(selectedLead.priority || 'Medium')}</div>
+                        <div className="mt-1">{getPriorityBadge(selectedLead.priority || 'Medium')}</div>
+                      </div>
+
+                      <div className="glass-panel p-3.5 rounded-xl flex flex-col justify-center">
+                        <div className="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold font-outfit">Added By</div>
+                        <div className="mt-1">
+                          <span className={`inline-block py-0.5 px-2 rounded-full text-[11px] font-bold border ${getAddedByStyle(selectedLead.addedBy)}`}>
+                            {selectedLead.addedBy || 'N/A'}
+                          </span>
+                        </div>
                       </div>
                     </div>
 
@@ -1188,7 +1245,24 @@ export default function AdminDashboard() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Added By *</label>
+                    <select
+                      required
+                      value={newLead.addedBy || ''}
+                      onChange={(e) => setNewLead({ ...newLead, addedBy: e.target.value as Lead['addedBy'] })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-zinc-950 border border-white/[0.06] text-zinc-200 text-sm focus:outline-none cursor-pointer"
+                    >
+                      <option value="" className="bg-zinc-950 text-zinc-600">Select...</option>
+                      {TEAM_MEMBERS.map(member => (
+                        <option key={member} value={member} className="bg-zinc-950 text-white">
+                          {member}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
                   <div>
                     <label className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Deal Priority</label>
                     <select
@@ -1412,7 +1486,24 @@ export default function AdminDashboard() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Added By *</label>
+                    <select
+                      required
+                      value={editingLead.addedBy || ''}
+                      onChange={(e) => setEditingLead({ ...editingLead, addedBy: e.target.value as Lead['addedBy'] })}
+                      className="w-full px-4 py-2.5 rounded-xl bg-zinc-950 border border-white/[0.06] text-zinc-200 text-sm focus:outline-none cursor-pointer"
+                    >
+                      <option value="" className="bg-zinc-950 text-zinc-600">Select...</option>
+                      {TEAM_MEMBERS.map(member => (
+                        <option key={member} value={member} className="bg-zinc-950 text-white">
+                          {member}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
                   <div>
                     <label className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Deal Priority</label>
                     <select
