@@ -28,14 +28,66 @@ import {
 } from 'lucide-react';
 import { FaInstagram as Instagram } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
+import { z } from 'zod';
+import { useForm, useFieldArray } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+
+const employeeFormSchema = z.object({
+  name: z.string().default(''),
+  role: z.string().default(''),
+  email: z.string().default(''),
+  phone: z.string().default('')
+});
+
+const leadFormSchema = z.object({
+  name: z.string().min(1, "Company/Brand name is required"),
+  service: z.string().default('Website'),
+  addedBy: z.string().optional().default(''),
+  priority: z.enum(['High', 'Medium', 'Low']).default('Medium'),
+  value: z.coerce.number().default(0),
+  description: z.string().optional().default(''),
+  instagram: z.string().optional().default(''),
+  website: z.string().optional().default(''),
+  status: z.string().default('Need to Outreach'),
+  employees: z.array(employeeFormSchema).default([]),
+  reasonForFailure: z.string().optional().default(''),
+  socials: z.string().optional().default('')
+});
+
+type LeadFormValues = z.infer<typeof leadFormSchema>;
+
+
+interface Employee {
+  name?: string;
+  role?: string;
+  email?: string;
+  phone?: string;
+}
 
 interface Lead {
   id: string;
-  name: string;
+  name?: string;
   description: string;
   instagram: string;
   website: string;
-  email: string;
+  email?: string;
+  emails?: string[];
+  employees?: Employee[];
   contactName: string;
   phone: string;
   service: string;
@@ -93,7 +145,7 @@ export default function AdminDashboard() {
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
   // Copy indicators
-  const [copiedField, setCopiedField] = useState<'email' | 'phone' | null>(null);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
 
   // Active items
   const [activeMenuLeadId, setActiveMenuLeadId] = useState<string | null>(null);
@@ -103,25 +155,84 @@ export default function AdminDashboard() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingLead, setEditingLead] = useState<Lead | null>(null);
 
-  const [newLead, setNewLead] = useState<Omit<Lead, 'id' | 'createdAt' | 'updatedAt'>>({
-    name: '',
-    description: '',
-    instagram: '',
-    website: '',
-    email: '',
-    contactName: '',
-    phone: '',
-    service: 'Website',
-    status: 'Need to Outreach',
-    reasonForFailure: '',
-    socials: '',
-    priority: 'Medium',
-    value: 0,
-    addedBy: ''
+  // React Hook Form for Add Lead
+  const addForm = useForm<LeadFormValues>({
+    resolver: zodResolver(leadFormSchema) as any,
+    defaultValues: {
+      name: '',
+      service: 'Website',
+      addedBy: '',
+      priority: 'Medium',
+      value: 0,
+      description: '',
+      instagram: '',
+      website: '',
+      status: 'Need to Outreach',
+      employees: [],
+      reasonForFailure: '',
+      socials: ''
+    }
+  });
+
+  const { fields: addEmployees, append: appendAddEmployee, remove: removeAddEmployee } = useFieldArray({
+    control: addForm.control,
+    name: "employees"
+  });
+
+  // React Hook Form for Edit Lead
+  const editForm = useForm<LeadFormValues>({
+    resolver: zodResolver(leadFormSchema) as any,
+    defaultValues: {
+      name: '',
+      service: 'Website',
+      addedBy: '',
+      priority: 'Medium',
+      value: 0,
+      description: '',
+      instagram: '',
+      website: '',
+      status: 'Need to Outreach',
+      employees: [],
+      reasonForFailure: '',
+      socials: ''
+    }
+  });
+
+  const { fields: editEmployees, append: appendEditEmployee, remove: removeEditEmployee } = useFieldArray({
+    control: editForm.control,
+    name: "employees"
   });
 
   const router = useRouter();
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const startEditingLead = (lead: Lead) => {
+    setEditingLead(lead);
+    editForm.reset({
+      name: lead.name || '',
+      service: lead.service || 'Website',
+      addedBy: lead.addedBy || '',
+      priority: (lead.priority as 'High' | 'Medium' | 'Low') || 'Medium',
+      value: lead.value || 0,
+      description: lead.description || '',
+      instagram: lead.instagram || '',
+      website: lead.website || '',
+      status: lead.status || 'Need to Outreach',
+      employees: lead.employees || [],
+      reasonForFailure: lead.reasonForFailure || '',
+      socials: lead.socials || ''
+    });
+  };
+
+  const closeAddModal = () => {
+    setIsAddModalOpen(false);
+    addForm.reset();
+  };
+
+  const closeEditModal = () => {
+    setEditingLead(null);
+    editForm.reset();
+  };
 
   useEffect(() => {
     fetchLeads();
@@ -154,38 +265,29 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleCreateLead = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newLead.name) return;
-
+  const handleCreateLead = async (data: LeadFormValues) => {
     try {
+      // Auto-hydrate legacy fields for backwards compatibility
+      const payload = {
+        ...data,
+        contactName: data.employees[0]?.name || '',
+        email: data.employees[0]?.email || '',
+        emails: data.employees.map(emp => emp.email).filter(Boolean) as string[],
+        phone: data.employees[0]?.phone || '',
+        reasonForFailure: '',
+        socials: ''
+      };
+
       const response = await fetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newLead),
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
         const createdLead = await response.json();
         setLeads([createdLead, ...leads]);
-        setIsAddModalOpen(false);
-        // Reset form
-        setNewLead({
-          name: '',
-          description: '',
-          instagram: '',
-          website: '',
-          email: '',
-          contactName: '',
-          phone: '',
-          service: 'Website',
-          status: 'Need to Outreach',
-          reasonForFailure: '',
-          socials: '',
-          priority: 'Medium',
-          value: 0,
-          addedBy: ''
-        });
+        closeAddModal();
       } else {
         alert('Failed to add lead');
       }
@@ -194,15 +296,25 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleUpdateLead = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleUpdateLead = async (data: LeadFormValues) => {
     if (!editingLead) return;
 
     try {
+      // Auto-hydrate legacy fields for backwards compatibility
+      const payload = {
+        ...data,
+        contactName: data.employees[0]?.name || '',
+        email: data.employees[0]?.email || '',
+        emails: data.employees.map(emp => emp.email).filter(Boolean) as string[],
+        phone: data.employees[0]?.phone || '',
+        reasonForFailure: editingLead.reasonForFailure || '',
+        socials: editingLead.socials || ''
+      };
+
       const response = await fetch(`/api/leads/${editingLead.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(editingLead),
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
@@ -214,7 +326,7 @@ export default function AdminDashboard() {
           setSelectedLead(updated);
         }
         
-        setEditingLead(null);
+        closeEditModal();
       } else {
         alert('Failed to update lead');
       }
@@ -222,6 +334,7 @@ export default function AdminDashboard() {
       alert('An error occurred while updating.');
     }
   };
+
 
   const handleDeleteLead = async (id: string) => {
     if (!confirm('Are you sure you want to delete this lead?')) return;
@@ -280,12 +393,14 @@ export default function AdminDashboard() {
     ];
 
     const rows = leads.map(lead => [
-      lead.name,
+      lead.name || '',
       lead.description,
       lead.instagram,
       lead.website,
-      lead.email,
-      lead.contactName,
+      lead.emails && lead.emails.length > 0 ? lead.emails.join('; ') : (lead.email || ''),
+      lead.employees && lead.employees.length > 0 
+        ? lead.employees.map(e => `${e.name || ''} (${e.role || ''})`).join('; ')
+        : (lead.contactName || ''),
       lead.phone,
       lead.service,
       lead.status,
@@ -309,9 +424,9 @@ export default function AdminDashboard() {
     document.body.removeChild(link);
   };
 
-  const copyToClipboard = (text: string, field: 'email' | 'phone') => {
+  const copyToClipboard = (text: string, identifier: string) => {
     navigator.clipboard.writeText(text);
-    setCopiedField(field);
+    setCopiedField(identifier);
     setTimeout(() => setCopiedField(null), 2000);
   };
 
@@ -350,10 +465,17 @@ export default function AdminDashboard() {
   const processedLeads = leads
     .filter(lead => {
       const matchesSearch = 
-        lead.name.toLowerCase().includes(search.toLowerCase()) ||
-        lead.description.toLowerCase().includes(search.toLowerCase()) ||
-        lead.contactName.toLowerCase().includes(search.toLowerCase()) ||
-        lead.email.toLowerCase().includes(search.toLowerCase());
+        (lead.name || '').toLowerCase().includes(search.toLowerCase()) ||
+        (lead.description || '').toLowerCase().includes(search.toLowerCase()) ||
+        (lead.contactName || '').toLowerCase().includes(search.toLowerCase()) ||
+        (lead.email || '').toLowerCase().includes(search.toLowerCase()) ||
+        (lead.emails || []).some(email => (email || '').toLowerCase().includes(search.toLowerCase())) ||
+        (lead.employees || []).some(emp => 
+          (emp.name || '').toLowerCase().includes(search.toLowerCase()) ||
+          (emp.role || '').toLowerCase().includes(search.toLowerCase()) ||
+          (emp.email || '').toLowerCase().includes(search.toLowerCase()) ||
+          (emp.phone || '').toLowerCase().includes(search.toLowerCase())
+        );
         
       const matchesStatus = statusFilter === 'All' || lead.status === statusFilter;
       const matchesService = serviceFilter === 'All' || lead.service === serviceFilter;
@@ -722,7 +844,7 @@ export default function AdminDashboard() {
                         {/* Name & Description */}
                         <td className="py-4.5 px-6">
                           <div className="font-semibold text-zinc-100 text-base tracking-wide group-hover:text-indigo-400 transition-colors">
-                            {lead.name}
+                            {lead.name || 'Unnamed Brand'}
                           </div>
                           {lead.description ? (
                             <div className="text-zinc-400 text-xs mt-1 leading-relaxed font-light line-clamp-2 max-w-xs break-words pr-2">
@@ -737,32 +859,76 @@ export default function AdminDashboard() {
 
                         {/* Contact Info */}
                         <td className="py-4.5 px-6" onClick={(e) => e.stopPropagation()}>
-                          {lead.contactName ? (
-                            <div className="text-zinc-200 font-medium text-sm">
-                              {lead.contactName}
+                          {lead.employees && lead.employees.length > 0 ? (
+                            <div className="space-y-2">
+                              {lead.employees.map((emp, empIdx) => (
+                                <div key={empIdx} className="text-xs border-b border-white/[0.02] last:border-0 pb-1 last:pb-0">
+                                  <div className="font-medium text-zinc-200">
+                                    {emp.name || 'Unnamed Employee'} {emp.role && <span className="text-[10px] text-zinc-500 font-normal">({emp.role})</span>}
+                                  </div>
+                                  <div className="flex flex-col gap-0.5 mt-0.5">
+                                    {emp.email && (
+                                      <a 
+                                        href={`mailto:${emp.email}`}
+                                        className="text-[10px] text-zinc-400 hover:text-indigo-400 transition-colors flex items-center gap-1"
+                                      >
+                                        <Mail className="w-2.5 h-2.5 text-zinc-500" />
+                                        <span className="truncate max-w-[120px]">{emp.email}</span>
+                                      </a>
+                                    )}
+                                    {emp.phone && (
+                                      <div className="text-[10px] text-zinc-400 flex items-center gap-1">
+                                        <Phone className="w-2.5 h-2.5 text-zinc-500" />
+                                        <span>{emp.phone}</span>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              ))}
                             </div>
                           ) : (
-                            <div className="text-zinc-600 text-xs italic font-light">No name</div>
-                          )}
-                          
-                          <div className="space-y-1 mt-1.5">
-                            {lead.email && (
-                              <a 
-                                href={`mailto:${lead.email}`}
-                                className="text-[11px] text-zinc-400 hover:text-indigo-400 transition-colors flex items-center gap-1.5"
-                              >
-                                <Mail className="w-3 h-3 text-zinc-500" />
-                                <span className="truncate max-w-[150px]">{lead.email}</span>
-                              </a>
-                            )}
-                            
-                            {lead.phone && (
-                              <div className="text-[11px] text-zinc-400 flex items-center gap-1.5">
-                                <Phone className="w-3 h-3 text-zinc-500" />
-                                <span>{lead.phone}</span>
+                            <>
+                              {lead.contactName ? (
+                                <div className="text-zinc-200 font-medium text-sm">
+                                  {lead.contactName}
+                                </div>
+                              ) : (
+                                <div className="text-zinc-600 text-xs italic font-light">No name</div>
+                              )}
+                              
+                              <div className="space-y-1 mt-1.5">
+                                {lead.emails && lead.emails.length > 0 ? (
+                                  lead.emails.map((email, idx) => email && (
+                                    <a 
+                                      key={idx}
+                                      href={`mailto:${email}`}
+                                      className="text-[11px] text-zinc-400 hover:text-indigo-400 transition-colors flex items-center gap-1.5"
+                                    >
+                                      <Mail className="w-3 h-3 text-zinc-500 flex-shrink-0" />
+                                      <span className="truncate max-w-[150px]">{email}</span>
+                                    </a>
+                                  ))
+                                ) : (
+                                  lead.email && (
+                                    <a 
+                                      href={`mailto:${lead.email}`}
+                                      className="text-[11px] text-zinc-400 hover:text-indigo-400 transition-colors flex items-center gap-1.5"
+                                    >
+                                      <Mail className="w-3 h-3 text-zinc-500 flex-shrink-0" />
+                                      <span className="truncate max-w-[150px]">{lead.email}</span>
+                                    </a>
+                                  )
+                                )}
+                                
+                                {lead.phone && (
+                                  <div className="text-[11px] text-zinc-400 flex items-center gap-1.5">
+                                    <Phone className="w-3 h-3 text-zinc-500" />
+                                    <span>{lead.phone}</span>
+                                  </div>
+                                )}
                               </div>
-                            )}
-                          </div>
+                            </>
+                          )}
                         </td>
 
                         {/* Service */}
@@ -893,7 +1059,7 @@ export default function AdminDashboard() {
                               >
                                 <button
                                   onClick={() => {
-                                    setEditingLead(lead);
+                                    startEditingLead(lead);
                                     setActiveMenuLeadId(null);
                                   }}
                                   className="w-full flex items-center space-x-2 px-3 py-2 rounded-lg text-xs text-zinc-300 hover:text-white hover:bg-white/[0.05] transition-colors"
@@ -955,7 +1121,7 @@ export default function AdminDashboard() {
                   <div className="px-6 py-6 border-b border-white/[0.05] flex justify-between items-start bg-zinc-900/20">
                     <div>
                       <div className="text-[10px] uppercase font-bold tracking-widest text-indigo-400">Lead Details</div>
-                      <h2 className="text-2xl font-bold text-white mt-1 font-outfit break-words pr-4">{selectedLead.name}</h2>
+                      <h2 className="text-2xl font-bold text-white mt-1 font-outfit break-words pr-4">{selectedLead.name || 'Unnamed Brand'}</h2>
                     </div>
                     <button
                       onClick={() => setSelectedLead(null)}
@@ -1060,23 +1226,40 @@ export default function AdminDashboard() {
                           <span className="text-xs text-zinc-500">Contact Person</span>
                           <span className="text-sm font-semibold text-zinc-200">{selectedLead.contactName || 'N/A'}</span>
                         </div>
-
-                        {/* Email */}
-                        {selectedLead.email && (
-                          <div className="flex justify-between items-center glass-panel px-4 py-3 rounded-xl border border-white/[0.04]">
-                            <div className="flex flex-col">
-                              <span className="text-[10px] text-zinc-500">Email Address</span>
-                              <span className="text-xs text-zinc-200 mt-0.5 break-all max-w-[220px]">{selectedLead.email}</span>
-                            </div>
-                            <button
-                              onClick={() => copyToClipboard(selectedLead.email, 'email')}
-                              className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-200 hover:bg-white/[0.04] transition-colors"
-                              title="Copy Email"
-                            >
-                              {copiedField === 'email' ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
-                            </button>
-                          </div>
-                        )}
+                         {/* Email */}
+                         {selectedLead.emails && selectedLead.emails.length > 0 ? (
+                           selectedLead.emails.map((email, idx) => email && (
+                             <div key={idx} className="flex justify-between items-center glass-panel px-4 py-3 rounded-xl border border-white/[0.04]">
+                               <div className="flex flex-col">
+                                 <span className="text-[10px] text-zinc-500">Email Address {selectedLead.emails && selectedLead.emails.length > 1 ? `#${idx + 1}` : ''}</span>
+                                 <span className="text-xs text-zinc-200 mt-0.5 break-all max-w-[220px]">{email}</span>
+                               </div>
+                               <button
+                                 onClick={() => copyToClipboard(email, email)}
+                                 className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-200 hover:bg-white/[0.04] transition-colors"
+                                 title="Copy Email"
+                               >
+                                 {copiedField === email ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+                               </button>
+                             </div>
+                           ))
+                         ) : (
+                           selectedLead.email && (
+                             <div className="flex justify-between items-center glass-panel px-4 py-3 rounded-xl border border-white/[0.04]">
+                               <div className="flex flex-col">
+                                 <span className="text-[10px] text-zinc-500">Email Address</span>
+                                 <span className="text-xs text-zinc-200 mt-0.5 break-all max-w-[220px]">{selectedLead.email}</span>
+                               </div>
+                               <button
+                                 onClick={() => copyToClipboard(selectedLead.email || '', selectedLead.email || '')}
+                                 className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-200 hover:bg-white/[0.04] transition-colors"
+                                 title="Copy Email"
+                               >
+                                 {copiedField === selectedLead.email ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+                               </button>
+                             </div>
+                           )
+                         )}
 
                         {/* Phone */}
                         {selectedLead.phone && (
@@ -1096,6 +1279,62 @@ export default function AdminDashboard() {
                         )}
                       </div>
                     </div>
+
+                    {/* Employees list in details drawer */}
+                    {selectedLead.employees && selectedLead.employees.length > 0 && (
+                      <div className="space-y-3">
+                        <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-widest">Employees / Team Members</h4>
+                        <div className="space-y-3">
+                          {selectedLead.employees.map((emp, idx) => (
+                            <div key={idx} className="glass-panel p-3.5 rounded-xl border border-white/[0.04] space-y-2">
+                              <div className="flex justify-between items-start">
+                                <div>
+                                  <div className="text-sm font-bold text-zinc-100">{emp.name || 'Unnamed Employee'}</div>
+                                  {emp.role && <div className="text-[10px] text-indigo-400 font-semibold uppercase tracking-wider">{emp.role}</div>}
+                                </div>
+                              </div>
+                              
+                              <div className="space-y-1.5 pt-1.5 border-t border-white/[0.02] text-xs">
+                                {emp.email && (
+                                  <div className="flex justify-between items-center">
+                                    <a 
+                                      href={`mailto:${emp.email}`} 
+                                      className="text-zinc-400 hover:text-indigo-400 flex items-center gap-1.5 transition-colors"
+                                    >
+                                      <Mail className="w-3 h-3 text-zinc-500" />
+                                      <span className="truncate max-w-[180px]">{emp.email}</span>
+                                    </a>
+                                    <button
+                                      onClick={() => copyToClipboard(emp.email || '', `emp-email-${idx}`)}
+                                      className="p-1 rounded text-zinc-500 hover:text-zinc-200 transition-colors"
+                                      title="Copy Email"
+                                    >
+                                      {copiedField === `emp-email-${idx}` ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                                    </button>
+                                  </div>
+                                )}
+                                
+                                {emp.phone && (
+                                  <div className="flex justify-between items-center">
+                                    <div className="text-zinc-400 flex items-center gap-1.5">
+                                      <Phone className="w-3 h-3 text-zinc-500" />
+                                      <span>{emp.phone}</span>
+                                    </div>
+                                    <button
+                                      onClick={() => copyToClipboard(emp.phone || '', `emp-phone-${idx}`)}
+                                      className="p-1 rounded text-zinc-500 hover:text-zinc-200 transition-colors"
+                                      title="Copy Phone"
+                                    >
+                                      {copiedField === `emp-phone-${idx}` ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
                     {/* Quick Access Large Social Cards */}
                     <div className="space-y-3">
@@ -1162,7 +1401,7 @@ export default function AdminDashboard() {
                   {/* Footer Actions */}
                   <div className="px-6 py-6 border-t border-white/[0.05] bg-zinc-900/30 flex space-x-3">
                     <button
-                      onClick={() => setEditingLead(selectedLead)}
+                      onClick={() => startEditingLead(selectedLead)}
                       className="flex-1 flex items-center justify-center space-x-2 py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-cyan-500 text-zinc-950 font-bold text-sm hover:opacity-95 transition-all"
                     >
                       <Edit className="w-4 h-4" />
@@ -1185,481 +1424,757 @@ export default function AdminDashboard() {
       </AnimatePresence>
 
       {/* Add Lead Modal */}
-      <AnimatePresence>
-        {isAddModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsAddModalOpen(false)}
-              className="absolute inset-0 bg-black/70 backdrop-blur-sm"
-            />
-            
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 15 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              transition={{ duration: 0.3 }}
-              className="glass-panel w-full max-w-2xl rounded-2xl border border-white/[0.08] shadow-2xl relative z-10 overflow-hidden"
-            >
-              {/* Modal Header */}
-              <div className="px-6 py-4.5 border-b border-white/[0.05] flex justify-between items-center bg-zinc-900/40">
-                <h3 className="text-lg font-bold text-white font-outfit">Add New Brand / Lead</h3>
-                <button 
-                  onClick={() => setIsAddModalOpen(false)}
-                  className="p-1 rounded-lg text-zinc-400 hover:text-white hover:bg-white/[0.04] transition-colors"
-                >
-                  <X className="w-4 h-4" />
-                </button>
+      <Dialog open={isAddModalOpen} onOpenChange={(open) => { if (!open) closeAddModal(); }}>
+        <DialogContent className="glass-panel w-full max-w-2xl rounded-2xl border border-white/[0.08] shadow-2xl relative z-50 overflow-hidden p-0 bg-zinc-950 text-white border-none focus:outline-none max-h-[90vh] flex flex-col">
+          {/* Modal Header */}
+          <div className="px-6 py-4.5 border-b border-white/[0.05] flex justify-between items-center bg-zinc-900/40 shrink-0">
+            <h3 className="text-lg font-bold text-white font-outfit">Add New Brand / Lead</h3>
+          </div>
+
+          <Form {...addForm}>
+            <form onSubmit={addForm.handleSubmit(handleCreateLead)} className="p-6 space-y-4 overflow-y-auto flex-1">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <FormField
+                  control={addForm.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem className="col-span-1 md:col-span-2">
+                      <FormLabel className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Company/Brand Name</FormLabel>
+                      <FormControl>
+                        <input
+                          type="text"
+                          placeholder="e.g. Atlas Kitchen"
+                          className="w-full px-4 py-2.5 rounded-xl glass-input text-zinc-200 placeholder-zinc-600 text-sm focus:outline-none"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={addForm.control}
+                  name="service"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Services Type</FormLabel>
+                      <FormControl>
+                        <select
+                          className="w-full px-4 py-2.5 rounded-xl bg-zinc-950 border border-white/[0.06] text-zinc-200 text-sm focus:outline-none cursor-pointer"
+                          {...field}
+                        >
+                          {SERVICES.map(service => (
+                            <option key={service} value={service} className="bg-zinc-950 text-white">
+                              {service}
+                            </option>
+                          ))}
+                        </select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
 
-              {/* Modal Body */}
-              <form onSubmit={handleCreateLead} className="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="col-span-1 md:col-span-2">
-                    <label className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Company/Brand Name *</label>
-                    <input
-                      type="text"
-                      required
-                      value={newLead.name}
-                      onChange={(e) => setNewLead({ ...newLead, name: e.target.value })}
-                      placeholder="e.g. Atlas Kitchen"
-                      className="w-full px-4 py-2.5 rounded-xl glass-input text-zinc-200 placeholder-zinc-600 text-sm focus:outline-none"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Services Type</label>
-                    <select
-                      value={newLead.service}
-                      onChange={(e) => setNewLead({ ...newLead, service: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-zinc-950 border border-white/[0.06] text-zinc-200 text-sm focus:outline-none cursor-pointer"
-                    >
-                      {SERVICES.map(service => (
-                        <option key={service} value={service} className="bg-zinc-950 text-white">
-                          {service}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <FormField
+                  control={addForm.control}
+                  name="addedBy"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Added By</FormLabel>
+                      <FormControl>
+                        <select
+                          className="w-full px-4 py-2.5 rounded-xl bg-zinc-950 border border-white/[0.06] text-zinc-200 text-sm focus:outline-none cursor-pointer"
+                          {...field}
+                        >
+                          <option value="" className="bg-zinc-950 text-zinc-600">Select...</option>
+                          {TEAM_MEMBERS.map(member => (
+                            <option key={member} value={member} className="bg-zinc-950 text-white">
+                              {member}
+                            </option>
+                          ))}
+                        </select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Added By *</label>
-                    <select
-                      required
-                      value={newLead.addedBy || ''}
-                      onChange={(e) => setNewLead({ ...newLead, addedBy: e.target.value as Lead['addedBy'] })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-zinc-950 border border-white/[0.06] text-zinc-200 text-sm focus:outline-none cursor-pointer"
-                    >
-                      <option value="" className="bg-zinc-950 text-zinc-600">Select...</option>
-                      {TEAM_MEMBERS.map(member => (
-                        <option key={member} value={member} className="bg-zinc-950 text-white">
-                          {member}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                <FormField
+                  control={addForm.control}
+                  name="priority"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Deal Priority</FormLabel>
+                      <FormControl>
+                        <select
+                          className="w-full px-4 py-2.5 rounded-xl bg-zinc-950 border border-white/[0.06] text-zinc-200 text-sm focus:outline-none cursor-pointer"
+                          {...field}
+                        >
+                          {PRIORITIES.map(priority => (
+                            <option key={priority} value={priority} className="bg-zinc-950 text-white">
+                              {priority} Priority
+                            </option>
+                          ))}
+                        </select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-                  <div>
-                    <label className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Deal Priority</label>
-                    <select
-                      value={newLead.priority}
-                      onChange={(e) => setNewLead({ ...newLead, priority: e.target.value as Lead['priority'] })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-zinc-950 border border-white/[0.06] text-zinc-200 text-sm focus:outline-none cursor-pointer"
-                    >
-                      {PRIORITIES.map(priority => (
-                        <option key={priority} value={priority} className="bg-zinc-950 text-white">
-                          {priority} Priority
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                <FormField
+                  control={addForm.control}
+                  name="value"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Estimated Monthly Budget ($)</FormLabel>
+                      <FormControl>
+                        <input
+                          type="number"
+                          placeholder="e.g. 1500"
+                          className="w-full px-4 py-2.5 rounded-xl glass-input text-zinc-200 placeholder-zinc-600 text-sm focus:outline-none"
+                          {...field}
+                          value={field.value || ''}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
-                  <div>
-                    <label className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Estimated Monthly Budget ($)</label>
-                    <input
-                      type="number"
-                      value={newLead.value || ''}
-                      onChange={(e) => setNewLead({ ...newLead, value: Number(e.target.value) || 0 })}
-                      placeholder="e.g. 1500"
-                      className="w-full px-4 py-2.5 rounded-xl glass-input text-zinc-200 placeholder-zinc-600 text-sm focus:outline-none"
-                    />
-                  </div>
-                </div>
+              <FormField
+                control={addForm.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Description / Notes / Thoughts</FormLabel>
+                    <FormControl>
+                      <textarea
+                        rows={3}
+                        placeholder="This is a B2B business that has a website, but needs direct sales automation..."
+                        className="w-full px-4 py-2.5 rounded-xl glass-input text-zinc-200 placeholder-zinc-600 text-sm resize-none focus:outline-none"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                <div>
-                  <label className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Description / Notes / Thoughts</label>
-                  <textarea
-                    rows={3}
-                    value={newLead.description}
-                    onChange={(e) => setNewLead({ ...newLead, description: e.target.value })}
-                    placeholder="This is a B2B business that has a website, but needs direct sales automation..."
-                    className="w-full px-4 py-2.5 rounded-xl glass-input text-zinc-200 placeholder-zinc-600 text-sm resize-none focus:outline-none"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Contact Person</label>
-                    <input
-                      type="text"
-                      value={newLead.contactName}
-                      onChange={(e) => setNewLead({ ...newLead, contactName: e.target.value })}
-                      placeholder="e.g. Ernest, Shawn"
-                      className="w-full px-4 py-2.5 rounded-xl glass-input text-zinc-200 placeholder-zinc-600 text-sm focus:outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Email</label>
-                    <input
-                      type="email"
-                      value={newLead.email}
-                      onChange={(e) => setNewLead({ ...newLead, email: e.target.value })}
-                      placeholder="ernest@atlas.kit"
-                      className="w-full px-4 py-2.5 rounded-xl glass-input text-zinc-200 placeholder-zinc-600 text-sm focus:outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Phone</label>
-                    <input
-                      type="text"
-                      value={newLead.phone}
-                      onChange={(e) => setNewLead({ ...newLead, phone: e.target.value })}
-                      placeholder="e.g. +65 9123 4567"
-                      className="w-full px-4 py-2.5 rounded-xl glass-input text-zinc-200 placeholder-zinc-600 text-sm focus:outline-none"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Instagram Profile</label>
-                    <input
-                      type="text"
-                      value={newLead.instagram}
-                      onChange={(e) => setNewLead({ ...newLead, instagram: e.target.value })}
-                      placeholder="https://instagram.com/..."
-                      className="w-full px-4 py-2.5 rounded-xl glass-input text-zinc-200 placeholder-zinc-600 text-sm focus:outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Website URL</label>
-                    <input
-                      type="text"
-                      value={newLead.website}
-                      onChange={(e) => setNewLead({ ...newLead, website: e.target.value })}
-                      placeholder="https://atlas.kitchen"
-                      className="w-full px-4 py-2.5 rounded-xl glass-input text-zinc-200 placeholder-zinc-600 text-sm focus:outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Other Socials/Links</label>
-                    <input
-                      type="text"
-                      value={newLead.socials}
-                      onChange={(e) => setNewLead({ ...newLead, socials: e.target.value })}
-                      placeholder="Twitter, LinkedIn..."
-                      className="w-full px-4 py-2.5 rounded-xl glass-input text-zinc-200 placeholder-zinc-600 text-sm focus:outline-none"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Initial Status</label>
-                    <select
-                      value={newLead.status}
-                      onChange={(e) => setNewLead({ ...newLead, status: e.target.value as Lead['status'] })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-zinc-950 border border-white/[0.06] text-zinc-200 text-sm focus:outline-none cursor-pointer"
-                    >
-                      {STATUSES.map(stat => (
-                        <option key={stat} value={stat} className="bg-zinc-950 text-white">
-                          {stat}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Failure Reason (If any)</label>
-                    <input
-                      type="text"
-                      value={newLead.reasonForFailure}
-                      onChange={(e) => setNewLead({ ...newLead, reasonForFailure: e.target.value })}
-                      placeholder="Leave blank if not failed..."
-                      className="w-full px-4 py-2.5 rounded-xl glass-input text-zinc-200 placeholder-zinc-600 text-sm focus:outline-none"
-                    />
-                  </div>
-                </div>
-
-                <div className="pt-4 border-t border-white/[0.05] flex justify-end space-x-3 bg-zinc-900/10">
+              {/* Employees section */}
+              <div className="space-y-3 glass-panel p-4 rounded-xl border border-white/[0.04]">
+                <div className="flex justify-between items-center">
+                  <label className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider">Employees / Brand Contacts</label>
                   <button
                     type="button"
-                    onClick={() => setIsAddModalOpen(false)}
-                    className="px-5 py-2.5 rounded-xl glass-pill text-sm font-semibold text-zinc-400 hover:text-white hover:bg-white/[0.02] transition-all"
+                    onClick={() => appendAddEmployee({ name: '', role: '', email: '', phone: '' })}
+                    className="inline-flex items-center space-x-1 text-xs font-bold text-indigo-400 hover:text-indigo-300 transition-colors"
                   >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-cyan-500 text-zinc-950 font-bold text-sm hover:opacity-95 transition-all hover:scale-[1.02]"
-                  >
-                    Add Lead
+                    <span>+ Add Employee</span>
                   </button>
                 </div>
-              </form>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+
+                {addEmployees.length === 0 ? (
+                  <div className="text-xs text-zinc-500 italic p-2 bg-zinc-900/20 rounded-lg text-center">
+                    No employees added yet. Click "+ Add Employee" to save contact details for individual team members.
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {addEmployees.map((fieldItem, idx) => (
+                      <div key={fieldItem.id} className="p-3 bg-zinc-900/30 rounded-xl border border-white/[0.02] space-y-2 relative">
+                        <button
+                          type="button"
+                          onClick={() => removeAddEmployee(idx)}
+                          className="absolute right-2 top-2 p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 transition-colors"
+                          title="Remove Employee"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 pr-10">
+                          <FormField
+                            control={addForm.control}
+                            name={`employees.${idx}.name`}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <input
+                                    type="text"
+                                    placeholder="Employee Name"
+                                    className="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-white/[0.04] text-zinc-200 placeholder-zinc-700 text-xs focus:outline-none"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={addForm.control}
+                            name={`employees.${idx}.role`}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <input
+                                    type="text"
+                                    placeholder="Role / Job Title (e.g. CEO, Marketing)"
+                                    className="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-white/[0.04] text-zinc-200 placeholder-zinc-700 text-xs focus:outline-none"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 pr-10">
+                          <FormField
+                            control={addForm.control}
+                            name={`employees.${idx}.email`}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <input
+                                    type="email"
+                                    placeholder="Email Address"
+                                    className="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-white/[0.04] text-zinc-200 placeholder-zinc-700 text-xs focus:outline-none"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={addForm.control}
+                            name={`employees.${idx}.phone`}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <input
+                                    type="text"
+                                    placeholder="Phone Number"
+                                    className="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-white/[0.04] text-zinc-200 placeholder-zinc-700 text-xs focus:outline-none"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <FormField
+                  control={addForm.control}
+                  name="instagram"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Instagram Profile</FormLabel>
+                      <FormControl>
+                        <input
+                          type="text"
+                          placeholder="https://instagram.com/..."
+                          className="w-full px-4 py-2.5 rounded-xl glass-input text-zinc-200 placeholder-zinc-600 text-sm focus:outline-none"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={addForm.control}
+                  name="website"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Website URL</FormLabel>
+                      <FormControl>
+                        <input
+                          type="text"
+                          placeholder="https://atlas.kitchen"
+                          className="w-full px-4 py-2.5 rounded-xl glass-input text-zinc-200 placeholder-zinc-600 text-sm focus:outline-none"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={addForm.control}
+                  name="socials"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Other Socials/Links</FormLabel>
+                      <FormControl>
+                        <input
+                          type="text"
+                          placeholder="Twitter, LinkedIn..."
+                          className="w-full px-4 py-2.5 rounded-xl glass-input text-zinc-200 placeholder-zinc-600 text-sm focus:outline-none"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={addForm.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Initial Status</FormLabel>
+                      <FormControl>
+                        <select
+                          className="w-full px-4 py-2.5 rounded-xl bg-zinc-950 border border-white/[0.06] text-zinc-200 text-sm focus:outline-none cursor-pointer"
+                          {...field}
+                        >
+                          {STATUSES.map(stat => (
+                            <option key={stat} value={stat} className="bg-zinc-950 text-white">
+                              {stat}
+                            </option>
+                          ))}
+                        </select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={addForm.control}
+                  name="reasonForFailure"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Failure Reason (If any)</FormLabel>
+                      <FormControl>
+                        <input
+                          type="text"
+                          placeholder="Leave blank if not failed..."
+                          className="w-full px-4 py-2.5 rounded-xl glass-input text-zinc-200 placeholder-zinc-600 text-sm focus:outline-none"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="pt-4 border-t border-white/[0.05] flex justify-end space-x-3 bg-zinc-900/10 shrink-0">
+                <button
+                  type="button"
+                  onClick={closeAddModal}
+                  className="px-5 py-2.5 rounded-xl glass-pill text-sm font-semibold text-zinc-400 hover:text-white hover:bg-white/[0.02] transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-cyan-500 text-zinc-950 font-bold text-sm hover:opacity-95 transition-all hover:scale-[1.02]"
+                >
+                  Add Lead
+                </button>
+              </div>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
 
       {/* Edit Lead Modal */}
-      <AnimatePresence>
-        {editingLead && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setEditingLead(null)}
-              className="absolute inset-0 bg-black/70 backdrop-blur-sm"
-            />
-            
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 15 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              transition={{ duration: 0.3 }}
-              className="glass-panel w-full max-w-2xl rounded-2xl border border-white/[0.08] shadow-2xl relative z-10 overflow-hidden"
-            >
-              {/* Modal Header */}
-              <div className="px-6 py-4.5 border-b border-white/[0.05] flex justify-between items-center bg-zinc-900/40">
-                <h3 className="text-lg font-bold text-white font-outfit">Edit Brand / Lead</h3>
-                <button 
-                  onClick={() => setEditingLead(null)}
-                  className="p-1 rounded-lg text-zinc-400 hover:text-white hover:bg-white/[0.04] transition-colors"
-                >
-                  <X className="w-4 h-4" />
-                </button>
+      <Dialog open={!!editingLead} onOpenChange={(open) => { if (!open) closeEditModal(); }}>
+        <DialogContent className="glass-panel w-full max-w-2xl rounded-2xl border border-white/[0.08] shadow-2xl relative z-50 overflow-hidden p-0 bg-zinc-950 text-white border-none focus:outline-none max-h-[90vh] flex flex-col">
+          {/* Modal Header */}
+          <div className="px-6 py-4.5 border-b border-white/[0.05] flex justify-between items-center bg-zinc-900/40 shrink-0">
+            <h3 className="text-lg font-bold text-white font-outfit">Edit Brand / Lead</h3>
+          </div>
+
+          <Form {...editForm}>
+            <form onSubmit={editForm.handleSubmit(handleUpdateLead)} className="p-6 space-y-4 overflow-y-auto flex-1">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <FormField
+                  control={editForm.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem className="col-span-1 md:col-span-2">
+                      <FormLabel className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Company/Brand Name</FormLabel>
+                      <FormControl>
+                        <input
+                          type="text"
+                          placeholder="e.g. Atlas Kitchen"
+                          className="w-full px-4 py-2.5 rounded-xl glass-input text-zinc-200 placeholder-zinc-600 text-sm focus:outline-none"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={editForm.control}
+                  name="service"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Services Type</FormLabel>
+                      <FormControl>
+                        <select
+                          className="w-full px-4 py-2.5 rounded-xl bg-zinc-950 border border-white/[0.06] text-zinc-200 text-sm focus:outline-none cursor-pointer"
+                          {...field}
+                        >
+                          {SERVICES.map(service => (
+                            <option key={service} value={service} className="bg-zinc-950 text-white">
+                              {service}
+                            </option>
+                          ))}
+                        </select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
 
-              {/* Modal Body */}
-              <form onSubmit={handleUpdateLead} className="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="col-span-1 md:col-span-2">
-                    <label className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Company/Brand Name *</label>
-                    <input
-                      type="text"
-                      required
-                      value={editingLead.name}
-                      onChange={(e) => setEditingLead({ ...editingLead, name: e.target.value })}
-                      placeholder="e.g. Atlas Kitchen"
-                      className="w-full px-4 py-2.5 rounded-xl glass-input text-zinc-200 placeholder-zinc-600 text-sm focus:outline-none"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Services Type</label>
-                    <select
-                      value={SERVICES.includes(editingLead.service as any) ? editingLead.service : 'Other'}
-                      onChange={(e) => setEditingLead({ ...editingLead, service: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-zinc-950 border border-white/[0.06] text-zinc-200 text-sm focus:outline-none cursor-pointer"
-                    >
-                      {SERVICES.map(service => (
-                        <option key={service} value={service} className="bg-zinc-950 text-white">
-                          {service}
-                        </option>
-                      ))}
-                      {!SERVICES.includes(editingLead.service as any) && editingLead.service && (
-                        <option value={editingLead.service} className="bg-zinc-950 text-white">
-                          {editingLead.service}
-                        </option>
-                      )}
-                    </select>
-                  </div>
-                </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <FormField
+                  control={editForm.control}
+                  name="addedBy"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Added By</FormLabel>
+                      <FormControl>
+                        <select
+                          className="w-full px-4 py-2.5 rounded-xl bg-zinc-950 border border-white/[0.06] text-zinc-200 text-sm focus:outline-none cursor-pointer"
+                          {...field}
+                        >
+                          <option value="" className="bg-zinc-950 text-zinc-600">Select...</option>
+                          {TEAM_MEMBERS.map(member => (
+                            <option key={member} value={member} className="bg-zinc-950 text-white">
+                              {member}
+                            </option>
+                          ))}
+                        </select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Added By *</label>
-                    <select
-                      required
-                      value={editingLead.addedBy || ''}
-                      onChange={(e) => setEditingLead({ ...editingLead, addedBy: e.target.value as Lead['addedBy'] })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-zinc-950 border border-white/[0.06] text-zinc-200 text-sm focus:outline-none cursor-pointer"
-                    >
-                      <option value="" className="bg-zinc-950 text-zinc-600">Select...</option>
-                      {TEAM_MEMBERS.map(member => (
-                        <option key={member} value={member} className="bg-zinc-950 text-white">
-                          {member}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                <FormField
+                  control={editForm.control}
+                  name="priority"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Deal Priority</FormLabel>
+                      <FormControl>
+                        <select
+                          className="w-full px-4 py-2.5 rounded-xl bg-zinc-950 border border-white/[0.06] text-zinc-200 text-sm focus:outline-none cursor-pointer"
+                          {...field}
+                        >
+                          {PRIORITIES.map(priority => (
+                            <option key={priority} value={priority} className="bg-zinc-950 text-white">
+                              {priority} Priority
+                            </option>
+                          ))}
+                        </select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-                  <div>
-                    <label className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Deal Priority</label>
-                    <select
-                      value={editingLead.priority || 'Medium'}
-                      onChange={(e) => setEditingLead({ ...editingLead, priority: e.target.value as Lead['priority'] })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-zinc-950 border border-white/[0.06] text-zinc-200 text-sm focus:outline-none cursor-pointer"
-                    >
-                      {PRIORITIES.map(priority => (
-                        <option key={priority} value={priority} className="bg-zinc-950 text-white">
-                          {priority} Priority
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                <FormField
+                  control={editForm.control}
+                  name="value"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Estimated Monthly Budget ($)</FormLabel>
+                      <FormControl>
+                        <input
+                          type="number"
+                          placeholder="e.g. 1500"
+                          className="w-full px-4 py-2.5 rounded-xl glass-input text-zinc-200 placeholder-zinc-600 text-sm focus:outline-none"
+                          {...field}
+                          value={field.value || ''}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
-                  <div>
-                    <label className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Estimated Monthly Budget ($)</label>
-                    <input
-                      type="number"
-                      value={editingLead.value || ''}
-                      onChange={(e) => setEditingLead({ ...editingLead, value: Number(e.target.value) || 0 })}
-                      placeholder="e.g. 1500"
-                      className="w-full px-4 py-2.5 rounded-xl glass-input text-zinc-200 placeholder-zinc-600 text-sm focus:outline-none"
-                    />
-                  </div>
-                </div>
+              <FormField
+                control={editForm.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Description / Notes / Thoughts</FormLabel>
+                    <FormControl>
+                      <textarea
+                        rows={3}
+                        placeholder="This is a B2B business that has a website, but needs direct sales automation..."
+                        className="w-full px-4 py-2.5 rounded-xl glass-input text-zinc-200 placeholder-zinc-600 text-sm resize-none focus:outline-none"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                <div>
-                  <label className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Description / Notes / Thoughts</label>
-                  <textarea
-                    rows={3}
-                    value={editingLead.description}
-                    onChange={(e) => setEditingLead({ ...editingLead, description: e.target.value })}
-                    placeholder="This is a B2B business that has a website, but needs direct sales automation..."
-                    className="w-full px-4 py-2.5 rounded-xl glass-input text-zinc-200 placeholder-zinc-600 text-sm resize-none focus:outline-none"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Contact Person</label>
-                    <input
-                      type="text"
-                      value={editingLead.contactName}
-                      onChange={(e) => setEditingLead({ ...editingLead, contactName: e.target.value })}
-                      placeholder="e.g. Ernest, Shawn"
-                      className="w-full px-4 py-2.5 rounded-xl glass-input text-zinc-200 placeholder-zinc-600 text-sm focus:outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Email</label>
-                    <input
-                      type="email"
-                      value={editingLead.email}
-                      onChange={(e) => setEditingLead({ ...editingLead, email: e.target.value })}
-                      placeholder="ernest@atlas.kit"
-                      className="w-full px-4 py-2.5 rounded-xl glass-input text-zinc-200 placeholder-zinc-600 text-sm focus:outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Phone</label>
-                    <input
-                      type="text"
-                      value={editingLead.phone}
-                      onChange={(e) => setEditingLead({ ...editingLead, phone: e.target.value })}
-                      placeholder="e.g. +65 9123 4567"
-                      className="w-full px-4 py-2.5 rounded-xl glass-input text-zinc-200 placeholder-zinc-600 text-sm focus:outline-none"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Instagram Profile</label>
-                    <input
-                      type="text"
-                      value={editingLead.instagram}
-                      onChange={(e) => setEditingLead({ ...editingLead, instagram: e.target.value })}
-                      placeholder="https://instagram.com/..."
-                      className="w-full px-4 py-2.5 rounded-xl glass-input text-zinc-200 placeholder-zinc-600 text-sm focus:outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Website URL</label>
-                    <input
-                      type="text"
-                      value={editingLead.website}
-                      onChange={(e) => setEditingLead({ ...editingLead, website: e.target.value })}
-                      placeholder="https://atlas.kitchen"
-                      className="w-full px-4 py-2.5 rounded-xl glass-input text-zinc-200 placeholder-zinc-600 text-sm focus:outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Other Socials/Links</label>
-                    <input
-                      type="text"
-                      value={editingLead.socials}
-                      onChange={(e) => setEditingLead({ ...editingLead, socials: e.target.value })}
-                      placeholder="Twitter, LinkedIn..."
-                      className="w-full px-4 py-2.5 rounded-xl glass-input text-zinc-200 placeholder-zinc-600 text-sm focus:outline-none"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Lead Status</label>
-                    <select
-                      value={editingLead.status}
-                      onChange={(e) => setEditingLead({ ...editingLead, status: e.target.value as Lead['status'] })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-zinc-950 border border-white/[0.06] text-zinc-200 text-sm focus:outline-none cursor-pointer"
-                    >
-                      {STATUSES.map(stat => (
-                        <option key={stat} value={stat} className="bg-zinc-950 text-white">
-                          {stat}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Failure Reason (If any)</label>
-                    <input
-                      type="text"
-                      value={editingLead.reasonForFailure || ''}
-                      onChange={(e) => setEditingLead({ ...editingLead, reasonForFailure: e.target.value })}
-                      placeholder="Leave blank if not failed..."
-                      className="w-full px-4 py-2.5 rounded-xl glass-input text-zinc-200 placeholder-zinc-600 text-sm focus:outline-none"
-                    />
-                  </div>
-                </div>
-
-                <div className="pt-4 border-t border-white/[0.05] flex justify-end space-x-3 bg-zinc-900/10">
+              {/* Employees section */}
+              <div className="space-y-3 glass-panel p-4 rounded-xl border border-white/[0.04]">
+                <div className="flex justify-between items-center">
+                  <label className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider">Employees / Brand Contacts</label>
                   <button
                     type="button"
-                    onClick={() => setEditingLead(null)}
-                    className="px-5 py-2.5 rounded-xl glass-pill text-sm font-semibold text-zinc-400 hover:text-white hover:bg-white/[0.02] transition-all"
+                    onClick={() => appendEditEmployee({ name: '', role: '', email: '', phone: '' })}
+                    className="inline-flex items-center space-x-1 text-xs font-bold text-indigo-400 hover:text-indigo-300 transition-colors"
                   >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-cyan-500 text-zinc-950 font-bold text-sm hover:opacity-95 transition-all hover:scale-[1.02]"
-                  >
-                    Save Changes
+                    <span>+ Add Employee</span>
                   </button>
                 </div>
-              </form>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+
+                {editEmployees.length === 0 ? (
+                  <div className="text-xs text-zinc-500 italic p-2 bg-zinc-900/20 rounded-lg text-center">
+                    No employees added yet. Click "+ Add Employee" to save contact details for individual team members.
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {editEmployees.map((fieldItem, idx) => (
+                      <div key={fieldItem.id} className="p-3 bg-zinc-900/30 rounded-xl border border-white/[0.02] space-y-2 relative">
+                        <button
+                          type="button"
+                          onClick={() => removeEditEmployee(idx)}
+                          className="absolute right-2 top-2 p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 transition-colors"
+                          title="Remove Employee"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 pr-10">
+                          <FormField
+                            control={editForm.control}
+                            name={`employees.${idx}.name`}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <input
+                                    type="text"
+                                    placeholder="Employee Name"
+                                    className="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-white/[0.04] text-zinc-200 placeholder-zinc-700 text-xs focus:outline-none"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={editForm.control}
+                            name={`employees.${idx}.role`}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <input
+                                    type="text"
+                                    placeholder="Role / Job Title (e.g. CEO, Marketing)"
+                                    className="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-white/[0.04] text-zinc-200 placeholder-zinc-700 text-xs focus:outline-none"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 pr-10">
+                          <FormField
+                            control={editForm.control}
+                            name={`employees.${idx}.email`}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <input
+                                    type="email"
+                                    placeholder="Email Address"
+                                    className="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-white/[0.04] text-zinc-200 placeholder-zinc-700 text-xs focus:outline-none"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={editForm.control}
+                            name={`employees.${idx}.phone`}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <input
+                                    type="text"
+                                    placeholder="Phone Number"
+                                    className="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-white/[0.04] text-zinc-200 placeholder-zinc-700 text-xs focus:outline-none"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <FormField
+                  control={editForm.control}
+                  name="instagram"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Instagram Profile</FormLabel>
+                      <FormControl>
+                        <input
+                          type="text"
+                          placeholder="https://instagram.com/..."
+                          className="w-full px-4 py-2.5 rounded-xl glass-input text-zinc-200 placeholder-zinc-600 text-sm focus:outline-none"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={editForm.control}
+                  name="website"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Website URL</FormLabel>
+                      <FormControl>
+                        <input
+                          type="text"
+                          placeholder="https://atlas.kitchen"
+                          className="w-full px-4 py-2.5 rounded-xl glass-input text-zinc-200 placeholder-zinc-600 text-sm focus:outline-none"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={editForm.control}
+                  name="socials"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Other Socials/Links</FormLabel>
+                      <FormControl>
+                        <input
+                          type="text"
+                          placeholder="Twitter, LinkedIn..."
+                          className="w-full px-4 py-2.5 rounded-xl glass-input text-zinc-200 placeholder-zinc-600 text-sm focus:outline-none"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={editForm.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Lead Status</FormLabel>
+                      <FormControl>
+                        <select
+                          className="w-full px-4 py-2.5 rounded-xl bg-zinc-950 border border-white/[0.06] text-zinc-200 text-sm focus:outline-none cursor-pointer"
+                          {...field}
+                        >
+                          {STATUSES.map(stat => (
+                            <option key={stat} value={stat} className="bg-zinc-950 text-white">
+                              {stat}
+                            </option>
+                          ))}
+                        </select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={editForm.control}
+                  name="reasonForFailure"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="block text-zinc-400 text-xs font-semibold uppercase tracking-wider mb-2">Failure Reason (If any)</FormLabel>
+                      <FormControl>
+                        <input
+                          type="text"
+                          placeholder="Leave blank if not failed..."
+                          className="w-full px-4 py-2.5 rounded-xl glass-input text-zinc-200 placeholder-zinc-600 text-sm focus:outline-none"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="pt-4 border-t border-white/[0.05] flex justify-end space-x-3 bg-zinc-900/10 shrink-0">
+                <button
+                  type="button"
+                  onClick={closeEditModal}
+                  className="px-5 py-2.5 rounded-xl glass-pill text-sm font-semibold text-zinc-400 hover:text-white hover:bg-white/[0.02] transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-cyan-500 text-zinc-950 font-bold text-sm hover:opacity-95 transition-all hover:scale-[1.02]"
+                >
+                  Save Changes
+                </button>
+              </div>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+
     </div>
   );
 }

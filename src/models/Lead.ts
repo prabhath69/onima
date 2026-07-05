@@ -1,11 +1,20 @@
 import mongoose from 'mongoose';
 
+export interface IEmployee {
+  name?: string;
+  role?: string;
+  email?: string;
+  phone?: string;
+}
+
 export interface ILead extends mongoose.Document {
-  name: string;
+  name?: string;
   description?: string;
   instagram?: string;
   website?: string;
   email?: string;
+  emails?: string[];
+  employees?: IEmployee[];
   contactName?: string;
   phone?: string;
   service?: string;
@@ -21,11 +30,23 @@ export interface ILead extends mongoose.Document {
 
 const LeadSchema = new mongoose.Schema<ILead>(
   {
-    name: { type: String, required: true },
+    name: { type: String, default: '' },
     description: { type: String, default: '' },
     instagram: { type: String, default: '' },
     website: { type: String, default: '' },
     email: { type: String, default: '' },
+    emails: { type: [String], default: [] },
+    employees: {
+      type: [
+        {
+          name: { type: String, default: '' },
+          role: { type: String, default: '' },
+          email: { type: String, default: '' },
+          phone: { type: String, default: '' },
+        }
+      ],
+      default: []
+    },
     contactName: { type: String, default: '' },
     phone: { type: String, default: '' },
     service: { type: String, default: '' },
