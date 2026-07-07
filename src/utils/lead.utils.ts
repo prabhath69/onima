@@ -1,10 +1,4 @@
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
-
-// Tailwind class merger utility
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
-}
+import { Lead } from "@/types/lead.types"
 
 // URL formatting helper
 export function formatUrl(url: string) {
@@ -13,6 +7,20 @@ export function formatUrl(url: string) {
     return url;
   }
   return `https://${url}`;
+}
+
+// Date formatting helper
+export function formatDate(dateStr?: string) {
+  if (!dateStr) return 'N/A';
+  const date = new Date(dateStr);
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
+  }).format(date);
 }
 
 // Styling badge color mapper for status
@@ -64,7 +72,7 @@ export function getAddedByStyle(addedBy?: string) {
 }
 
 // CSV content generator helper
-export function generateCSVContent(leads: any[]) {
+export function generateCSVContent(leads: Lead[]) {
   const headers = [
     'Name',
     'Description/Thoughts',
@@ -79,7 +87,9 @@ export function generateCSVContent(leads: any[]) {
     'Estimated Value ($)',
     'Reason for failure',
     'Socials/Notes',
-    'Added By'
+    'Added By',
+    'Added Date',
+    'Last Updated'
   ];
 
   const rows = leads.map(lead => [
@@ -89,7 +99,7 @@ export function generateCSVContent(leads: any[]) {
     lead.website || '',
     lead.emails && lead.emails.length > 0 ? lead.emails.join('; ') : (lead.email || ''),
     lead.employees && lead.employees.length > 0 
-      ? lead.employees.map((e: any) => `${e.name || ''} (${e.role || ''})`).join('; ')
+      ? lead.employees.map((e) => `${e.name || ''} (${e.role || ''})`).join('; ')
       : (lead.contactName || ''),
     lead.phone || '',
     lead.service || '',
@@ -98,7 +108,9 @@ export function generateCSVContent(leads: any[]) {
     lead.value || 0,
     lead.reasonForFailure || '',
     lead.socials || '',
-    lead.addedBy || ''
+    lead.addedBy || '',
+    formatDate(lead.createdAt),
+    formatDate(lead.updatedAt)
   ]);
 
   return [

@@ -1,23 +1,15 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowRight, MessageCircle, Phone, Zap, ChevronRight } from 'lucide-react';
-import { motion } from 'framer-motion';
-
-const fadeUp = { hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0 } };
-const fadeIn = { hidden: { opacity: 0 }, visible: { opacity: 1 } };
-const scaleIn = { hidden: { opacity: 0, scale: 0.95 }, visible: { opacity: 1, scale: 1 } };
-const stagger = { visible: { transition: { staggerChildren: 0.12 } } };
 
 const Home = () => {
   const [typedText, setTypedText] = useState('');
-  const [isVisible, setIsVisible] = useState(false);
 
   const typewriterText = "We deploy AI agents that kill busywork—permanently.";
 
   useEffect(() => {
-    setIsVisible(true);
     let i = 0;
     const timer = setInterval(() => {
       if (i < typewriterText.length) {
@@ -44,34 +36,25 @@ const Home = () => {
       {/* Hero Section */}
       <section className="min-h-screen flex flex-col justify-center items-center relative pt-24">
         <div className="text-center z-10 px-6 max-w-5xl">
-          <motion.h1
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          <h1
             className="text-6xl md:text-8xl font-bold mb-8 tracking-tight font-outfit"
           >
             Intelligence That<br />
             <span className="bg-gradient-to-r from-indigo-400 via-violet-400 to-cyan-400 bg-clip-text text-transparent">
               Actually Works
             </span>
-          </motion.h1>
-          
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5, duration: 0.6 }}
+          </h1>
+
+          <div
             className="h-16 mb-12"
           >
             <p className="text-xl md:text-2xl text-zinc-300 font-light tracking-wide">
               {typedText}
               <span className="text-indigo-400 animate-pulse font-bold">|</span>
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          <div
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
             <Link 
@@ -88,16 +71,14 @@ const Home = () => {
               Explore Services
               <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
             </Link>
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* Services Preview */}
       <section className="py-24 relative z-10 border-t border-white/[0.04] glass-section">
         <div className="max-w-7xl mx-auto px-6">
-          <motion.div
-            initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }}
-            variants={fadeUp} transition={{ duration: 0.7 }}
+          <div
             className="text-center mb-20"
           >
             <h2 className="text-4xl md:text-5xl font-bold mb-6 font-outfit">
@@ -106,14 +87,12 @@ const Home = () => {
             <p className="text-xl text-zinc-400 max-w-3xl mx-auto font-light">
               Innovative solutions designed to automate workflows and optimize customer engagement.
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.15 }}
-            variants={stagger}
+          <div
             className="grid md:grid-cols-3 gap-8 mb-16"
           >
-            <motion.div variants={scaleIn} transition={{ duration: 0.5 }} className="group glass-card p-8 rounded-2xl md:col-span-2 flex flex-col justify-between animate-shimmer">
+            <div className="group glass-card p-8 rounded-2xl md:col-span-2 flex flex-col justify-between animate-shimmer">
               <div>
                 <MessageCircle className="w-12 h-12 text-indigo-400 mb-6 group-hover:scale-110 transition-transform duration-500" />
                 <h3 className="text-2xl font-bold mb-4 font-outfit text-zinc-100 group-hover:text-indigo-300 transition-colors">
@@ -126,9 +105,9 @@ const Home = () => {
               <div className="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent font-semibold text-lg">
                 +340% conversion rate
               </div>
-            </motion.div>
+            </div>
 
-            <motion.div variants={scaleIn} transition={{ duration: 0.5 }} className="group glass-card p-8 rounded-2xl md:col-span-1 flex flex-col justify-between animate-shimmer">
+            <div className="group glass-card p-8 rounded-2xl md:col-span-1 flex flex-col justify-between animate-shimmer">
               <div>
                 <Phone className="w-12 h-12 text-indigo-400 mb-6 group-hover:scale-110 transition-transform duration-500" />
                 <h3 className="text-2xl font-bold mb-4 font-outfit text-zinc-100 group-hover:text-indigo-300 transition-colors">
@@ -141,9 +120,9 @@ const Home = () => {
               <div className="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent font-semibold text-lg">
                 97% satisfaction rate
               </div>
-            </motion.div>
+            </div>
 
-            <motion.div variants={scaleIn} transition={{ duration: 0.5 }} className="group glass-card p-8 rounded-2xl md:col-span-3 flex flex-col md:flex-row md:items-center md:justify-between gap-6 animate-shimmer">
+            <div className="group glass-card p-8 rounded-2xl md:col-span-3 flex flex-col md:flex-row md:items-center md:justify-between gap-6 animate-shimmer">
               <div className="max-w-2xl">
                 <div className="flex items-center gap-4 mb-4">
                   <Zap className="w-12 h-12 text-indigo-400 group-hover:scale-110 transition-transform duration-500" />
@@ -158,24 +137,22 @@ const Home = () => {
               <div className="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent font-bold text-3xl whitespace-nowrap md:text-right">
                 $95K saved annually
               </div>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
 
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} transition={{ duration: 0.5 }} className="text-center">
+          <div className="text-center">
             <Link href="/services" className="inline-flex items-center text-indigo-400 hover:text-indigo-300 font-medium transition-colors group">
               View All Services
               <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
             </Link>
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* Work Preview */}
       <section className="py-24 relative z-10 border-t border-white/[0.04] glass-section">
         <div className="max-w-7xl mx-auto px-6">
-          <motion.div
-            initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }}
-            variants={fadeUp} transition={{ duration: 0.7 }}
+          <div
             className="text-center mb-20"
           >
             <h2 className="text-4xl md:text-5xl font-bold mb-6 font-outfit">
@@ -184,14 +161,12 @@ const Home = () => {
             <p className="text-xl text-zinc-400 max-w-3xl mx-auto font-light">
               Real metrics from live automation pipelines that cut response delays and save headcount.
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }}
-            variants={stagger}
+          <div
             className="grid md:grid-cols-2 gap-8 mb-16"
           >
-            <motion.div variants={fadeUp} transition={{ duration: 0.6 }} className="group glass-card p-8 rounded-2xl animate-shimmer">
+            <div className="group glass-card p-8 rounded-2xl animate-shimmer">
               <div className="text-xs font-semibold uppercase tracking-wider text-cyan-400 mb-2">E-commerce</div>
               <h3 className="text-2xl font-bold mb-6 font-outfit text-zinc-100 group-hover:text-indigo-300 transition-colors">
                 E-commerce Lead Qualification
@@ -206,9 +181,9 @@ const Home = () => {
               <div className="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent font-bold text-xl">
                 +340% conversion rate
               </div>
-            </motion.div>
+            </div>
 
-            <motion.div variants={fadeUp} transition={{ duration: 0.6 }} className="group glass-card p-8 rounded-2xl animate-shimmer">
+            <div className="group glass-card p-8 rounded-2xl animate-shimmer">
               <div className="text-xs font-semibold uppercase tracking-wider text-cyan-400 mb-2">SaaS</div>
               <h3 className="text-2xl font-bold mb-6 font-outfit text-zinc-100 group-hover:text-indigo-300 transition-colors">
                 SaaS Customer Onboarding
@@ -223,9 +198,9 @@ const Home = () => {
               <div className="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent font-bold text-xl">
                 $2.3M cost savings
               </div>
-            </motion.div>
+            </div>
 
-            <motion.div variants={fadeUp} transition={{ duration: 0.6 }} className="group glass-card p-8 rounded-2xl md:col-span-2 flex flex-col md:flex-row justify-between items-center gap-6 animate-shimmer">
+            <div className="group glass-card p-8 rounded-2xl md:col-span-2 flex flex-col md:flex-row justify-between items-center gap-6 animate-shimmer">
               <div>
                 <h4 className="text-lg font-semibold text-zinc-200 font-outfit mb-2">Total System Performance</h4>
                 <p className="text-sm text-zinc-400 font-light max-w-xl">
@@ -240,29 +215,27 @@ const Home = () => {
                   </div>
                 ))}
               </div>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
 
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} transition={{ duration: 0.5 }} className="text-center">
+          <div className="text-center">
             <Link href="/work" className="inline-flex items-center text-indigo-400 hover:text-indigo-300 font-medium transition-colors group">
               View All Case Studies
               <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
             </Link>
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* CTA Section */}
       <section className="py-24 relative z-10 border-t border-white/[0.04]">
-        <motion.div
-          initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.4 }}
-          variants={fadeUp} transition={{ duration: 0.8 }}
+        <div
           className="max-w-4xl mx-auto px-6 text-center"
         >
           <h2 className="text-4xl md:text-6xl font-bold mb-8 font-outfit">
             Show us your biggest <span className="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">bottleneck</span>.
           </h2>
-          
+
           <Link 
             href="/contact"
             className="group bg-gradient-to-r from-indigo-500 to-cyan-500 hover:opacity-90 px-12 py-4 rounded-full text-xl font-semibold transition-all duration-300 hover:scale-105 inline-flex items-center text-zinc-950 shadow-lg shadow-indigo-500/25"
@@ -270,9 +243,9 @@ const Home = () => {
             Let's Break It
             <ChevronRight className="w-6 h-6 ml-2 group-hover:translate-x-1 transition-transform" />
           </Link>
-          
+
           <p className="text-zinc-500 mt-5 text-sm font-light">Action over paperwork. Always.</p>
-        </motion.div>
+        </div>
       </section>
     </div>
   );

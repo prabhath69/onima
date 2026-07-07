@@ -66,6 +66,7 @@ const LeadSchema = new mongoose.Schema<ILead>(
 LeadSchema.set('toJSON', {
   virtuals: true,
   versionKey: false,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   transform: function (doc: any, ret: any) {
     ret.id = ret._id.toString();
     delete ret._id;

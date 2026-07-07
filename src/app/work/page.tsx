@@ -1,20 +1,13 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
-  ArrowRight, Phone, MessageCircle, Zap, Bot, Mic, Brain,
-  Globe, MessageSquare, Mail,
-  ChevronRight, Layers, Server, Volume2, Play, Pause,
-  ShieldCheck, Clock, TrendingUp, Users, Sparkles, Eye
+  ArrowRight, Phone, MessageCircle, Zap,
+  Globe, MessageSquare, Mail, Layers, Server, Play, Pause, Clock, TrendingUp, Users, Sparkles, Eye
 } from 'lucide-react';
 import { FaInstagram as Instagram, FaFacebook as Facebook, FaLinkedin as Linkedin } from 'react-icons/fa';
-import { motion, AnimatePresence } from 'framer-motion';
-
-const fadeUp = { hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0 } };
-const stagger = { visible: { transition: { staggerChildren: 0.1 } } };
-const scaleIn = { hidden: { opacity: 0, scale: 0.95 }, visible: { opacity: 1, scale: 1 } };
 
 /* ─── Media showcase data ─── */
 
@@ -222,10 +215,7 @@ const Work = () => {
       {/* Hero */}
       <section className="py-14 md:py-20 relative z-10">
         <div className="max-w-7xl mx-auto px-6 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          <div
           >
             <h1 className="text-5xl md:text-7xl font-bold mb-6 font-outfit tracking-tight">
               Our <span className="bg-gradient-to-r from-indigo-400 via-violet-400 to-cyan-400 bg-clip-text text-transparent">Showcase</span>
@@ -233,19 +223,19 @@ const Work = () => {
             <p className="text-xl text-zinc-400 max-w-3xl mx-auto font-light leading-relaxed">
               Three production platforms powering real businesses — with live demos you can hear, watch, and see.
             </p>
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* Platform Selector */}
       <section className="pb-6 relative z-10">
         <div className="max-w-5xl mx-auto px-6">
-          <motion.div initial="hidden" animate="visible" variants={stagger} className="grid md:grid-cols-3 gap-4">
+          <div className="grid md:grid-cols-3 gap-4">
             {platforms.map((pl, i) => {
               const PlIcon = pl.icon;
               const active = activePlatform === i;
               return (
-                <motion.button key={pl.id} variants={scaleIn} transition={{ duration: 0.4 }} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }} onClick={() => setActivePlatform(i)}
+                <button key={pl.id} onClick={() => setActivePlatform(i)}
                   className={`group relative p-5 rounded-2xl text-left transition-all duration-500 cursor-pointer overflow-hidden ${active ? 'glass-card border-white/[0.12] scale-[1.02]' : 'glass-card border-white/[0.04] hover:border-white/[0.08]'}`}>
                   {active && <div className="absolute inset-0 rounded-2xl opacity-30 pointer-events-none" style={{ background: `radial-gradient(ellipse at 50% 0%, ${pl.glow}, transparent 70%)` }} />}
                   <div className="relative z-10">
@@ -258,103 +248,102 @@ const Work = () => {
                     <h3 className={`text-lg font-bold font-outfit transition-colors ${active ? 'text-zinc-100' : 'text-zinc-300 group-hover:text-zinc-100'}`}>{pl.label}</h3>
                   </div>
                   <div className={`absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r ${pl.accentGrad} transition-opacity duration-500 ${active ? 'opacity-100' : 'opacity-0'}`} />
-                </motion.button>
+                </button>
               );
             })}
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* Platform Details */}
-      <AnimatePresence mode="wait">
-        <motion.section key={p.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }} className="py-12 relative z-10">
-          <div className="max-w-7xl mx-auto px-6">
 
-            {/* Overview + Tech Stack */}
-            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger} className="grid lg:grid-cols-5 gap-10 mb-14">
-              <motion.div variants={fadeUp} transition={{ duration: 0.6 }} className="lg:col-span-3">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${p.glow}, transparent)`, border: '1px solid rgba(255,255,255,0.06)' }}>
-                    <PIcon className={`w-6 h-6 ${p.accentText}`} />
+      <section key={p.id} className="py-12 relative z-10">
+        <div className="max-w-7xl mx-auto px-6">
+
+          {/* Overview + Tech Stack */}
+          <div className="grid lg:grid-cols-5 gap-10 mb-14">
+            <div className="lg:col-span-3">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${p.glow}, transparent)`, border: '1px solid rgba(255,255,255,0.06)' }}>
+                  <PIcon className={`w-6 h-6 ${p.accentText}`} />
+                </div>
+                <h2 className="text-3xl md:text-4xl font-bold font-outfit text-zinc-100">{p.headline}</h2>
+              </div>
+              <p className="text-lg text-zinc-400 font-light leading-relaxed mb-8">{p.sub}</p>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {p.stats.map((s, i) => (
+                  <div key={i} className="glass-card p-4 rounded-xl text-center animate-shimmer">
+                    <div className={`text-2xl font-bold font-outfit bg-gradient-to-r ${p.accentGrad} bg-clip-text text-transparent`}>{s.v}</div>
+                    <div className="text-[11px] text-zinc-500 uppercase tracking-wider mt-1 font-medium">{s.l}</div>
                   </div>
-                  <h2 className="text-3xl md:text-4xl font-bold font-outfit text-zinc-100">{p.headline}</h2>
-                </div>
-                <p className="text-lg text-zinc-400 font-light leading-relaxed mb-8">{p.sub}</p>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  {p.stats.map((s, i) => (
-                    <div key={i} className="glass-card p-4 rounded-xl text-center animate-shimmer">
-                      <div className={`text-2xl font-bold font-outfit bg-gradient-to-r ${p.accentGrad} bg-clip-text text-transparent`}>{s.v}</div>
-                      <div className="text-[11px] text-zinc-500 uppercase tracking-wider mt-1 font-medium">{s.l}</div>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
-              <motion.div variants={fadeUp} transition={{ duration: 0.6, delay: 0.2 }} className="lg:col-span-2">
-                <h3 className="text-sm font-bold uppercase tracking-[0.15em] text-zinc-500 mb-4 flex items-center gap-2"><Layers className="w-4 h-4" /> Tech Stack</h3>
-                <div className="flex flex-col gap-3">
-                  {p.tech.map((t, i) => (
-                    <div key={i} className="glass-card p-4 rounded-xl flex items-center justify-between animate-shimmer">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${p.glow}, transparent)` }}>
-                          <Server className={`w-4 h-4 ${p.accentText}`} />
-                        </div>
-                        <span className="text-zinc-200 font-semibold text-sm font-outfit">{t.name}</span>
+                ))}
+              </div>
+            </div>
+            <div className="lg:col-span-2">
+              <h3 className="text-sm font-bold uppercase tracking-[0.15em] text-zinc-500 mb-4 flex items-center gap-2"><Layers className="w-4 h-4" /> Tech Stack</h3>
+              <div className="flex flex-col gap-3">
+                {p.tech.map((t, i) => (
+                  <div key={i} className="glass-card p-4 rounded-xl flex items-center justify-between animate-shimmer">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${p.glow}, transparent)` }}>
+                        <Server className={`w-4 h-4 ${p.accentText}`} />
                       </div>
-                      <span className="text-[11px] font-medium uppercase tracking-wider text-zinc-500 glass-pill px-3 py-1 rounded-full">{t.role}</span>
+                      <span className="text-zinc-200 font-semibold text-sm font-outfit">{t.name}</span>
                     </div>
-                  ))}
-                </div>
-              </motion.div>
-            </motion.div>
-
-            {/* ── Live Demos ── */}
-            {filtered.length > 0 && (
-              <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} transition={{ duration: 0.6 }} className="mb-14">
-                <h3 className="text-sm font-bold uppercase tracking-[0.15em] text-zinc-500 mb-6 flex items-center gap-2">
-                  <Eye className="w-4 h-4" /> Live Demos & Recordings
-                </h3>
-                <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger} className="grid md:grid-cols-2 gap-8">
-                  {filtered.map((s) => (
-                    <motion.div key={s.id} variants={fadeUp} transition={{ duration: 0.5 }} className="flex flex-col gap-4">
-                      {/* Title + tags */}
-                      <div>
-                        <h4 className="text-xl font-bold font-outfit text-zinc-100 mb-2">{s.title}</h4>
-                        <p className="text-sm text-zinc-400 font-light leading-relaxed mb-3">{s.description}</p>
-                        <div className="flex flex-wrap gap-2">
-                          {s.tags.map((tag) => (
-                            <span key={tag} className="text-[10px] font-semibold uppercase tracking-wider glass-pill px-3 py-1 rounded-full text-zinc-400">{tag}</span>
-                          ))}
-                        </div>
-                      </div>
-                      {/* Media */}
-                      {s.mediaType === 'audio' && <AudioPlayer src={s.mediaSrc} accent={p.accentGrad} />}
-                      {s.mediaType === 'video' && <VideoPlayer src={s.mediaSrc} />}
-                      {s.mediaType === 'images' && <ImageShowcase srcs={s.mediaSrcs!} />}
-                    </motion.div>
-                  ))}
-                </motion.div>
-              </motion.div>
-            )}
-
+                    <span className="text-[11px] font-medium uppercase tracking-wider text-zinc-500 glass-pill px-3 py-1 rounded-full">{t.role}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
-        </motion.section>
-      </AnimatePresence>
+
+          {/* ── Live Demos ── */}
+          {filtered.length > 0 && (
+            <div className="mb-14">
+              <h3 className="text-sm font-bold uppercase tracking-[0.15em] text-zinc-500 mb-6 flex items-center gap-2">
+                <Eye className="w-4 h-4" /> Live Demos & Recordings
+              </h3>
+              <div className="grid md:grid-cols-2 gap-8">
+                {filtered.map((s) => (
+                  <div key={s.id} className="flex flex-col gap-4">
+                    {/* Title + tags */}
+                    <div>
+                      <h4 className="text-xl font-bold font-outfit text-zinc-100 mb-2">{s.title}</h4>
+                      <p className="text-sm text-zinc-400 font-light leading-relaxed mb-3">{s.description}</p>
+                      <div className="flex flex-wrap gap-2">
+                        {s.tags.map((tag) => (
+                          <span key={tag} className="text-[10px] font-semibold uppercase tracking-wider glass-pill px-3 py-1 rounded-full text-zinc-400">{tag}</span>
+                        ))}
+                      </div>
+                    </div>
+                    {/* Media */}
+                    {s.mediaType === 'audio' && <AudioPlayer src={s.mediaSrc} accent={p.accentGrad} />}
+                    {s.mediaType === 'video' && <VideoPlayer src={s.mediaSrc} />}
+                    {s.mediaType === 'images' && <ImageShowcase srcs={s.mediaSrcs!} />}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+        </div>
+      </section>
 
       {/* Omnichannel Band */}
       <section className="py-14 glass-section border-t border-b border-white/[0.04] relative z-10">
         <div className="max-w-5xl mx-auto px-6 text-center">
-          <motion.h3 initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} transition={{ duration: 0.5 }} className="text-sm font-bold uppercase tracking-[0.2em] text-zinc-500 mb-8">Omnichannel Reach</motion.h3>
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger} className="flex flex-wrap justify-center gap-4">
+          <h3 className="text-sm font-bold uppercase tracking-[0.2em] text-zinc-500 mb-8">Omnichannel Reach</h3>
+          <div className="flex flex-wrap justify-center gap-4">
             {[{ icon: Globe, l: 'Website' }, { icon: Instagram, l: 'Instagram' }, { icon: Facebook, l: 'Facebook' }, { icon: MessageSquare, l: 'WhatsApp' }, { icon: Mail, l: 'Email' }, { icon: Linkedin, l: 'LinkedIn' }].map((ch, i) => {
               const CIcon = ch.icon;
               return (
-                <motion.div key={i} variants={scaleIn} transition={{ duration: 0.3 }} whileHover={{ scale: 1.08, y: -2 }} className="group glass-card px-5 py-3 rounded-2xl flex items-center gap-2 animate-shimmer hover:border-indigo-500/20 transition-all">
+                <div key={i} className="group glass-card px-5 py-3 rounded-2xl flex items-center gap-2 animate-shimmer hover:border-indigo-500/20 transition-all">
                   <CIcon className="w-4 h-4 text-indigo-400 group-hover:scale-110 transition-transform" />
                   <span className="text-sm text-zinc-300 font-medium">{ch.l}</span>
-                </motion.div>
+                </div>
               );
             })}
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -366,24 +355,24 @@ const Work = () => {
               Collective <span className="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">Impact</span>
             </h2>
           </div>
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger} className="grid grid-cols-2 md:grid-cols-4 gap-5">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
             {[{ icon: Clock, v: '24/7', l: 'Always On' }, { icon: TrendingUp, v: '+340%', l: 'Conversion Lift' }, { icon: Users, v: '97%', l: 'Satisfaction' }, { icon: Sparkles, v: '0 hrs', l: 'Manual Work' }].map((s, i) => {
               const SIcon = s.icon;
               return (
-                <motion.div key={i} variants={scaleIn} transition={{ duration: 0.4 }} whileHover={{ y: -4 }} className="group glass-card p-7 rounded-2xl flex flex-col items-center text-center animate-shimmer">
+                <div key={i} className="group glass-card p-7 rounded-2xl flex flex-col items-center text-center animate-shimmer">
                   <SIcon className="w-9 h-9 text-indigo-400 mb-3 group-hover:scale-110 transition-transform duration-500" />
                   <div className="text-3xl font-bold bg-gradient-to-r from-indigo-400 via-violet-400 to-cyan-400 bg-clip-text text-transparent mb-1 font-outfit">{s.v}</div>
                   <div className="text-zinc-400 font-light text-sm">{s.l}</div>
-                </motion.div>
+                </div>
               );
             })}
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* CTA */}
       <section className="py-20 border-t border-white/[0.04] relative z-10">
-        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.4 }} variants={fadeUp} transition={{ duration: 0.8 }} className="max-w-4xl mx-auto px-6 text-center">
+        <div className="max-w-4xl mx-auto px-6 text-center">
           <h2 className="text-4xl md:text-6xl font-bold mb-8 leading-tight font-outfit">
             Ready to deploy your own <span className="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">AI workforce</span>?
           </h2>
@@ -391,7 +380,7 @@ const Work = () => {
             Start Your Transformation <ArrowRight className="w-6 h-6 ml-2 group-hover:translate-x-1 transition-transform" />
           </Link>
           <p className="text-zinc-500 mt-5 text-sm font-light">No forms. No demos. Just results.</p>
-        </motion.div>
+        </div>
       </section>
     </div>
   );

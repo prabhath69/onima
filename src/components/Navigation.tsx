@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -34,10 +33,7 @@ const Navigation = () => {
 
   return (
     <nav className="fixed top-5 left-0 right-0 z-50 flex justify-center px-4 md:px-6">
-      <motion.div 
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      <div
         className={`w-full max-w-5xl px-6 py-3 rounded-full flex justify-between items-center transition-all duration-500 ${
           isScrolled 
             ? 'nav-glass-scrolled py-2.5' 
@@ -51,7 +47,7 @@ const Navigation = () => {
         <Link href="/" className="text-xl font-bold bg-gradient-to-r from-indigo-400 via-violet-400 to-cyan-400 bg-clip-text text-transparent hover:opacity-85 transition-opacity tracking-wider">
           ONIMA
         </Link>
-        
+
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-2">
           {navItems.map((item) => (
@@ -66,11 +62,9 @@ const Navigation = () => {
             >
               {item.label}
               {pathname === item.path && (
-                <motion.div
-                  layoutId="nav-indicator"
+                <div
                   className="absolute inset-0 rounded-full bg-white/[0.07]"
                   style={{ zIndex: -1 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
                 />
               )}
             </Link>
@@ -84,25 +78,18 @@ const Navigation = () => {
         >
           {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
-      </motion.div>
+      </div>
 
       {/* Mobile Menu */}
-      <AnimatePresence>
+
         {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -10, scale: 0.97 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          <div
             className="absolute top-16 left-4 right-4 md:hidden glass-card p-5 rounded-2xl shadow-2xl z-40"
           >
             <div className="flex flex-col gap-2">
-              {navItems.map((item, i) => (
-                <motion.div
+              {navItems.map((item) => (
+                <div
                   key={item.path}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.05, duration: 0.3 }}
                 >
                   <Link
                     href={item.path}
@@ -115,12 +102,12 @@ const Navigation = () => {
                   >
                     {item.label}
                   </Link>
-                </motion.div>
+                </div>
               ))}
             </div>
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
+
     </nav>
   );
 };

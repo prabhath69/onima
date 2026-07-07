@@ -1,28 +1,19 @@
 "use client";
 
-import React from 'react';
 import Link from 'next/link';
 import { Mail } from 'lucide-react';
 import { FaLinkedin as Linkedin, FaTwitter as Twitter } from 'react-icons/fa';
-import { motion } from 'framer-motion';
 import { usePathname } from 'next/navigation';
-
-const fadeUp = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } };
 
 const Footer = () => {
   const pathname = usePathname();
-  
+
   if (pathname?.startsWith('/admin')) {
     return null;
   }
 
   return (
-    <motion.footer
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.3 }}
-      variants={fadeUp}
-      transition={{ duration: 0.6 }}
+    <footer
       className="relative z-10 border-t border-white/[0.04] glass-section py-8 mt-auto"
     >
       <div className="max-w-7xl mx-auto px-6">
@@ -67,7 +58,7 @@ const Footer = () => {
           </div>
         </div>
       </div>
-    </motion.footer>
+    </footer>
   );
 };
 

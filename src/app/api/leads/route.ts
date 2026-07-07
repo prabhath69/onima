@@ -28,10 +28,10 @@ export async function POST(request: Request) {
   try {
     await connectToDatabase();
     const leadData = await request.json();
-    
+
     // We don't need to manually generate an ID, MongoDB will create an _id automatically.
     const newLead = await Lead.create(leadData);
-    
+
     return NextResponse.json(newLead);
   } catch (error) {
     console.error('Error creating lead:', error);

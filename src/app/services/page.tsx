@@ -1,16 +1,11 @@
 "use client";
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
-import { 
+import {
   MessageCircle, Phone, Zap, Globe, Layers,
   ArrowRight, CheckCircle, TrendingUp, Clock, DollarSign
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-
-const fadeUp = { hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0 } };
-const stagger = { visible: { transition: { staggerChildren: 0.12 } } };
-const scaleIn = { hidden: { opacity: 0, scale: 0.95 }, visible: { opacity: 1, scale: 1 } };
 
 const Services = () => {
   const [activeService, setActiveService] = useState(0);
@@ -92,10 +87,7 @@ const Services = () => {
       {/* Hero */}
       <section className="py-20 relative z-10">
         <div className="max-w-7xl mx-auto px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          <div
             className="text-center mb-16"
           >
             <h1 className="text-5xl md:text-7xl font-bold mb-6 font-outfit tracking-tight">
@@ -105,23 +97,19 @@ const Services = () => {
             <p className="text-xl text-zinc-400 max-w-3xl mx-auto font-light">
               Five core services. One mission: eliminate the busywork crushing your team's potential.
             </p>
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* Service Navigation */}
       <section className="py-12 border-b border-white/[0.04] relative z-10">
         <div className="max-w-7xl mx-auto px-6">
-          <motion.div initial="hidden" animate="visible" variants={stagger} className="flex flex-wrap justify-center gap-4">
+          <div className="flex flex-wrap justify-center gap-4">
             {services.map((service, index) => {
               const ServiceIcon = service.icon;
               return (
-                <motion.button
+                <button
                   key={index}
-                  variants={scaleIn}
-                  transition={{ duration: 0.3 }}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.97 }}
                   onClick={() => setActiveService(index)}
                   className={`flex items-center px-6 py-3 rounded-full font-semibold transition-all duration-500 cursor-pointer ${
                     activeService === index
@@ -138,65 +126,61 @@ const Services = () => {
                         : 'bg-indigo-500/10 border-indigo-500/20 text-indigo-300'
                     }`}>FLAGSHIP</span>
                   )}
-                </motion.button>
+                </button>
               );
             })}
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* Active Service Details */}
-      <AnimatePresence mode="wait">
-        <motion.section
+
+        <section
           key={activeService}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           className="py-20 relative z-10"
         >
           <div className="max-w-7xl mx-auto px-6">
             <div className="grid lg:grid-cols-2 gap-16 items-start">
               {/* Service Overview */}
               <div>
-                <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1, duration: 0.5 }} className="flex items-center mb-6">
+                <div className="flex items-center mb-6">
                   <ActiveIcon className="w-12 h-12 text-indigo-400 mr-4" />
                   <div>
                     <h2 className="text-4xl font-bold font-outfit text-zinc-100">{services[activeService].title}</h2>
                     <p className="text-indigo-400 font-semibold tracking-wide uppercase text-sm mt-1">{services[activeService].subtitle}</p>
                   </div>
-                </motion.div>
-                
-                <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2, duration: 0.5 }} className="text-xl text-zinc-300 leading-relaxed mb-8 font-light">
+                </div>
+
+                <p className="text-xl text-zinc-300 leading-relaxed mb-8 font-light">
                   {services[activeService].description}
-                </motion.p>
+                </p>
 
                 {/* Features */}
                 <div className="mb-8">
                   <h3 className="text-2xl font-bold mb-4 font-outfit text-zinc-100">What's Included</h3>
-                  <motion.div initial="hidden" animate="visible" variants={stagger} className="flex flex-col gap-3">
+                  <div className="flex flex-col gap-3">
                     {services[activeService].features.map((feature, index) => (
-                      <motion.div key={index} variants={fadeUp} transition={{ duration: 0.4 }} className="flex items-center">
+                      <div key={index} className="flex items-center">
                         <CheckCircle className="w-5 h-5 text-cyan-400 mr-3 flex-shrink-0" />
                         <span className="text-zinc-300 font-light">{feature}</span>
-                      </motion.div>
+                      </div>
                     ))}
-                  </motion.div>
+                  </div>
                 </div>
 
                 {/* Metrics */}
-                <motion.div initial="hidden" animate="visible" variants={stagger} className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4">
                   {Object.entries(metrics).map(([key, value], index) => (
-                    <motion.div key={index} variants={scaleIn} transition={{ duration: 0.4 }} whileHover={{ y: -3 }} className="glass-card p-5 rounded-2xl animate-shimmer">
+                    <div key={index} className="glass-card p-5 rounded-2xl animate-shimmer">
                       <div className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">{value}</div>
                       <div className="text-sm text-zinc-400 capitalize mt-1 font-light">{key}</div>
-                    </motion.div>
+                    </div>
                   ))}
-                </motion.div>
+                </div>
               </div>
 
               {/* Scenario & ROI */}
-              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2, duration: 0.6 }} className="flex flex-col gap-8">
+              <div className="flex flex-col gap-8">
                 <div className="glass-card p-8 rounded-2xl animate-shimmer">
                   <h3 className="text-2xl font-bold mb-6 font-outfit bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">Real-World Scenario</h3>
                   <div className="flex flex-col gap-6">
@@ -229,10 +213,7 @@ const Services = () => {
                           <span className={`${i === 0 ? 'text-indigo-400' : i === 1 ? 'text-cyan-400' : 'text-zinc-200'} font-bold`}>{bar.val}</span>
                         </div>
                         <div className="bg-zinc-950 rounded-full h-3 overflow-hidden">
-                          <motion.div
-                            initial={{ width: 0 }}
-                            animate={{ width: '100%' }}
-                            transition={{ delay: 0.4 + i * 0.2, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+                          <div
                             className={`h-full bg-gradient-to-r ${i === 0 ? 'from-indigo-500 to-cyan-400' : i === 1 ? 'from-cyan-500 to-blue-400' : 'from-violet-500 to-indigo-400'} ${bar.w}`}
                           />
                         </div>
@@ -240,23 +221,22 @@ const Services = () => {
                     ))}
                   </div>
                 </div>
-              </motion.div>
+              </div>
             </div>
           </div>
-        </motion.section>
-      </AnimatePresence>
+        </section>
 
       {/* Why Choose Onima */}
       <section className="py-24 glass-section border-t border-white/[0.04] relative z-10">
         <div className="max-w-7xl mx-auto px-6">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} variants={fadeUp} transition={{ duration: 0.7 }} className="text-center mb-16">
+          <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-6 font-outfit">
               Why Choose <span className="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">Onima</span>?
             </h2>
             <p className="text-xl text-zinc-400 font-light">We don't just automate—we transform. Here's how we're different.</p>
-          </motion.div>
+          </div>
 
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.15 }} variants={stagger} className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-8">
             {[
               { icon: TrendingUp, title: "Results-Driven", description: "Every solution is measured by impact, not features. We optimize for your bottom line, not our technology showcase." },
               { icon: Clock, title: "Speed to Value", description: "Most automations deployed within 48 hours. See results in days, not months. No lengthy implementation cycles." },
@@ -264,20 +244,20 @@ const Services = () => {
             ].map((benefit, index) => {
               const BenefitIcon = benefit.icon;
               return (
-                <motion.div key={index} variants={scaleIn} transition={{ duration: 0.5 }} whileHover={{ y: -6 }} className="group glass-card p-8 rounded-2xl animate-shimmer">
+                <div key={index} className="group glass-card p-8 rounded-2xl animate-shimmer">
                   <BenefitIcon className="w-12 h-12 text-indigo-400 mb-6 group-hover:scale-105 transition-transform" />
                   <h3 className="text-2xl font-bold mb-4 font-outfit text-zinc-100 group-hover:text-indigo-300 transition-colors">{benefit.title}</h3>
                   <p className="text-zinc-400 leading-relaxed font-light">{benefit.description}</p>
-                </motion.div>
+                </div>
               );
             })}
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* CTA */}
       <section className="py-24 border-t border-white/[0.04] relative z-10">
-        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.4 }} variants={fadeUp} transition={{ duration: 0.8 }} className="max-w-4xl mx-auto px-6 text-center">
+        <div className="max-w-4xl mx-auto px-6 text-center">
           <h2 className="text-4xl md:text-6xl font-bold mb-8 font-outfit">
             Ready to <span className="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">optimize</span> your business?
           </h2>
@@ -288,7 +268,7 @@ const Services = () => {
             Talk to Us <ArrowRight className="w-6 h-6 ml-2 group-hover:translate-x-1 transition-transform" />
           </Link>
           <p className="text-zinc-500 mt-5 text-sm font-light">Action over paperwork. Always.</p>
-        </motion.div>
+        </div>
       </section>
     </div>
   );

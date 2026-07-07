@@ -2,8 +2,8 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Lock, ArrowRight, ShieldAlert } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 export default function AdminLogin() {
   const [password, setPassword] = useState('');
@@ -37,7 +37,7 @@ export default function AdminLogin() {
       } else {
         setError(data.error || 'Invalid credentials');
       }
-    } catch (err) {
+    } catch {
       setError('An error occurred. Please try again.');
     } finally {
       setLoading(false);
@@ -50,10 +50,7 @@ export default function AdminLogin() {
       <div className="absolute top-[20%] left-[20%] w-[350px] h-[350px] bg-indigo-500/20 glow-sphere" />
       <div className="absolute bottom-[20%] right-[20%] w-[350px] h-[350px] bg-cyan-500/15 glow-sphere" />
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      <div
         className="w-full max-w-md"
       >
         <div className="text-center mb-8">
@@ -94,14 +91,12 @@ export default function AdminLogin() {
             </div>
 
             {error && (
-              <motion.div
-                initial={{ opacity: 0, y: -5 }}
-                animate={{ opacity: 1, y: 0 }}
+              <div
                 className="flex items-center space-x-2 text-red-400 bg-red-500/10 border border-red-500/20 px-4 py-3 rounded-xl text-xs"
               >
                 <ShieldAlert className="w-4 h-4 flex-shrink-0" />
                 <span>{error}</span>
-              </motion.div>
+              </div>
             )}
 
             <button
@@ -122,14 +117,14 @@ export default function AdminLogin() {
         </div>
 
         <div className="text-center mt-6">
-          <a
+          <Link
             href="/"
             className="text-xs text-zinc-600 hover:text-zinc-400 transition-colors"
           >
             &larr; Return to main site
-          </a>
+          </Link>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }
