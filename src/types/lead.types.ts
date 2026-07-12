@@ -25,4 +25,7 @@ export interface Lead {
   addedBy?: 'Pavan' | 'Prabhath' | 'Nitish' | '';
   createdAt?: string;
   updatedAt?: string;
+  source?: string;
+  tags?: string[];
+  nextFollowUpDate?: string;
 }

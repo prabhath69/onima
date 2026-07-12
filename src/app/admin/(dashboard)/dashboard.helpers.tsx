@@ -92,6 +92,45 @@ export const calculateDashboardKPIs = (leads: Lead[]) => {
   };
 };
 
+export const SOURCES_LIST = [
+  'LinkedIn',
+  'Cold Email',
+  'Inbound',
+  'Twitter',
+  'Referral'
+] as const;
+
+export const TAGS_LIST = [
+  'Outreach',
+  'SAAS',
+  'Design',
+  'Development',
+  'Hot Lead',
+  'Enterprise'
+] as const;
+
+export const decorateLead = (lead: Lead): Lead => {
+  const code = (lead.id || lead.name || '').split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  
+  const source = lead.source || SOURCES_LIST[code % SOURCES_LIST.length];
+  
+  const tag1 = TAGS_LIST[code % TAGS_LIST.length];
+  const tag2 = TAGS_LIST[(code + 3) % TAGS_LIST.length];
+  const tags = lead.tags && lead.tags.length > 0 ? lead.tags : (tag1 === tag2 ? [tag1] : [tag1, tag2]);
+
+  const dateBase = new Date(lead.updatedAt || lead.createdAt || Date.now());
+  const daysToAdd = (code % 7) + 1;
+  const followUp = new Date(dateBase.getTime() + daysToAdd * 24 * 60 * 60 * 1000);
+  const nextFollowUpDate = lead.nextFollowUpDate || followUp.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+  return {
+    ...lead,
+    source,
+    tags,
+    nextFollowUpDate
+  };
+};
+
 export const processLeads = (
   leads: Lead[],
   search: string,
@@ -99,10 +138,13 @@ export const processLeads = (
   serviceFilter: string,
   priorityFilter: string,
   addedByFilter: string,
+  sourceFilter: string,
+  tagFilter: string,
   sortField: keyof Lead,
   sortDirection: 'asc' | 'desc'
 ) => {
   return leads
+    .map(decorateLead)
     .filter(lead => {
       const matchesSearch = 
         (lead.name || '').toLowerCase().includes(search.toLowerCase()) ||
@@ -110,6 +152,8 @@ export const processLeads = (
         (lead.contactName || '').toLowerCase().includes(search.toLowerCase()) ||
         (lead.email || '').toLowerCase().includes(search.toLowerCase()) ||
         (lead.emails || []).some(email => (email || '').toLowerCase().includes(search.toLowerCase())) ||
+        (lead.source || '').toLowerCase().includes(search.toLowerCase()) ||
+        (lead.tags || []).some(tag => tag.toLowerCase().includes(search.toLowerCase())) ||
         (lead.employees || []).some(emp => 
           (emp.name || '').toLowerCase().includes(search.toLowerCase()) ||
           (emp.role || '').toLowerCase().includes(search.toLowerCase()) ||
@@ -121,8 +165,10 @@ export const processLeads = (
       const matchesService = serviceFilter === 'All' || lead.service === serviceFilter;
       const matchesPriority = priorityFilter === 'All' || lead.priority === priorityFilter;
       const matchesAddedBy = addedByFilter === 'All' || lead.addedBy === addedByFilter;
+      const matchesSource = sourceFilter === 'All' || lead.source === sourceFilter;
+      const matchesTag = tagFilter === 'All' || (lead.tags || []).includes(tagFilter);
 
-      return matchesSearch && matchesStatus && matchesService && matchesPriority && matchesAddedBy;
+      return matchesSearch && matchesStatus && matchesService && matchesPriority && matchesAddedBy && matchesSource && matchesTag;
     })
     .sort((a, b) => {
       let aVal = a[sortField] || '';
